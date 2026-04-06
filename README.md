@@ -21,6 +21,9 @@ Census data covers **1,917 municipalities** across Japan (2015 & 2020, sourced f
 ![Elderly rate choropleth — nationwide](output/03-02_elderly_rate_choropleth_wide.png)
 *Elderly rate by municipality (nationwide) — generated with [`sql/03_visualization/03-02_generate_choropleth_elderly_rate.sql`](sql/03_visualization/03-02_generate_choropleth_elderly_rate.sql) + QGIS*
 
+![Population density choropleth — nationwide](output/03-02_population_density_choropleth_wide.png)
+*Population density by municipality (nationwide) — same query styled by `pop_density` in QGIS*
+
 ---
 
 ## Use Cases
@@ -50,7 +53,7 @@ Geocode customer records to municipality level, calculate penetration rates agai
 |----------|-------|-------------|
 | [`sql/01_basic/`](sql/01_basic/) | 3 | Reverse geocoding, prefecture lookup, straight-line distance |
 | [`sql/02_analysis/`](sql/02_analysis/) | 8 | Trade area population, customer aggregation, delivery assignment, route analysis, demographic ranking |
-| [`sql/03_visualization/`](sql/03_visualization/) | 1 | Municipality polygon output with demographic breakdown for QGIS choropleth |
+| [`sql/03_visualization/`](sql/03_visualization/) | 1 | Municipality polygon output with demographic breakdown for QGIS choropleth (elderly rate, population density, and more) |
 
 → **[Full template index with code examples and output descriptions](sql/README.md)**
 

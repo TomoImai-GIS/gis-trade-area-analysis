@@ -80,8 +80,8 @@ ORDER BY m.elderly_rate DESC;
 -- · The geometry column (m.geom) is inherited from admin_jp.municipalities_v2
 --   via e_stat.v_census_municipality. SRID: 4326 (WGS84).
 --
--- · For population density choropleth, see:
---   03-01_generate_choropleth_population.sql (in progress)
+-- · For population density choropleth, use this same query and style the
+--   result by the `pop_density` column in QGIS.
 --
 -- [EXAMPLES]
 --   Nationwide map (all municipalities with population >= 5,000):

@@ -33,8 +33,7 @@ Production-ready PostGIS SQL templates for spatial analysis and location intelli
 
 | File | Purpose | Output format |
 |------|---------|---------------|
-| 03-01_generate_choropleth_population.sql | Population density choropleth data | 🚧 in progress |
-| [03-02_generate_choropleth_elderly_rate.sql](03_visualization/03-02_generate_choropleth_elderly_rate.sql) | Elderly rate choropleth — municipality polygons with demographic breakdown for QGIS | GeoJSON / PostGIS layer |
+| [03-02_generate_choropleth_elderly_rate.sql](03_visualization/03-02_generate_choropleth_elderly_rate.sql) | Municipality polygons with demographic breakdown for QGIS choropleth — covers elderly rate, population density, and more | GeoJSON / PostGIS layer |
 | 03-03_export_route_for_map.sql | Route geometry for map export | 🚧 in progress |
 | 03-04_generate_heatmap_density.sql | Point density data for heatmap | 🚧 in progress |
 
@@ -94,8 +93,8 @@ ORDER BY distance_km;
 
 > **What you get:** municipality name, population, elderly rate, density, area, and distance from center — sorted by proximity.
 
-<!-- ![Trade area analysis map — QGIS choropleth output](../output/trade_area_example.png) -->
-> 📷 *Map screenshot coming soon*
+![Population density choropleth — nationwide](../output/03-02_population_density_choropleth_wide.png)
+*Population density by municipality (nationwide) — generated with 03-02_generate_choropleth_elderly_rate.sql + QGIS (styled by `pop_density`)*
 
 ---
 
