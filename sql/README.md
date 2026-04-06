@@ -96,6 +96,9 @@ ORDER BY distance_km;
 ![Population density choropleth — nationwide](../output/03-02_population_density_choropleth_wide.png)
 *Population density by municipality (nationwide) — generated with 03-02_generate_choropleth_elderly_rate.sql + QGIS (styled by `pop_density`)*
 
+![Population density choropleth — Kanto/Chubu detail](../output/03-02_population_density_choropleth_zoomed.png)
+*Zoomed view (Kanto / Chubu region)*
+
 ---
 
 ### 👴 Demographic & Aging Analysis
