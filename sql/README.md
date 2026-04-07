@@ -93,10 +93,10 @@ ORDER BY distance_km;
 
 > **What you get:** municipality name, population, elderly rate, density, area, and distance from center — sorted by proximity.
 
-![Population density choropleth — nationwide](../output/03-02_population_density_choropleth_wide.png)
+![Population density choropleth — nationwide](../output/sql/03-02_population_density_choropleth_wide.png)
 *Population density by municipality (nationwide) — generated with 03-02_generate_choropleth_elderly_rate.sql + QGIS (styled by `pop_density`)*
 
-![Population density choropleth — Kanto/Chubu detail](../output/03-02_population_density_choropleth_zoomed.png)
+![Population density choropleth — Kanto/Chubu detail](../output/sql/03-02_population_density_choropleth_zoomed.png)
 *Zoomed view (Kanto / Chubu region)*
 
 ---
@@ -135,10 +135,10 @@ LIMIT (SELECT limit_count FROM params);
 
 > **Census design note:** Population and employment data for 2015 and 2020 are stored in a single normalized table (`e_stat.census_population`) keyed by `survey_year`. The unified view `e_stat.v_census_municipality` always references the latest available year; year-specific views (`_2015`, `_2020`) allow explicit cross-year comparison.
 
-![Elderly rate choropleth — nationwide overview](../output/03-02_elderly_rate_choropleth_wide.png)
+![Elderly rate choropleth — nationwide overview](../output/sql/03-02_elderly_rate_choropleth_wide.png)
 *Elderly rate by municipality (nationwide) — generated with 03-02_generate_choropleth_elderly_rate.sql + QGIS*
 
-![Elderly rate choropleth — Kanto/Chubu detail](../output/03-02_elderly_rate_choropleth_zoomed.png)
+![Elderly rate choropleth — Kanto/Chubu detail](../output/sql/03-02_elderly_rate_choropleth_zoomed.png)
 *Zoomed view (Kanto / Chubu region)*
 
 ---

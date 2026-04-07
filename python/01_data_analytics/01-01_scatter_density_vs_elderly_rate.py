@@ -43,7 +43,7 @@ OUTLIER_N         = 5       # number of outlier municipalities to label per side
 OUTLIER_MIN_POP   = 50_000  # only municipalities above this size are outlier candidates
 
 OUTPUT_DIR  = os.path.normpath(
-    os.path.join(os.path.dirname(__file__), '..', '..', 'output')
+    os.path.join(os.path.dirname(__file__), '..', '..', 'output', 'python')
 )
 OUTPUT_FILE = '01-01_scatter_density_vs_elderly_rate.png'
 

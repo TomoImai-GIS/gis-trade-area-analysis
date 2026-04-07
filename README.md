@@ -19,10 +19,10 @@ Census data covers **1,917 municipalities** across Japan (2015 & 2020, sourced f
 
 ## Sample Output
 
-![Elderly rate choropleth — nationwide](output/03-02_elderly_rate_choropleth_wide.png)
+![Elderly rate choropleth — nationwide](output/sql/03-02_elderly_rate_choropleth_wide.png)
 *Elderly rate by municipality (nationwide) — generated with [`sql/03_visualization/03-02_generate_choropleth_elderly_rate.sql`](sql/03_visualization/03-02_generate_choropleth_elderly_rate.sql) + QGIS*
 
-![Population density choropleth — nationwide](output/03-02_population_density_choropleth_wide.png)
+![Population density choropleth — nationwide](output/sql/03-02_population_density_choropleth_wide.png)
 *Population density by municipality (nationwide) — same query styled by `pop_density` in QGIS*
 
 ---
@@ -38,7 +38,7 @@ Rank municipalities by elderly population rate with flexible region and populati
 ### 🚚 Delivery Area Assignment & Route Analysis
 Assign municipalities to their nearest depot; calculate route length through each prefecture or municipality from waypoints or a GPS log table. Built for **delivery network design** and **vehicle routing analysis**.
 
-![Cities along route — Nagoya to Haneda Airport](output/02-05c_list_cities_along_route_from_gps_log.png)
+![Cities along route — Nagoya to Haneda Airport](output/sql/02-05c_list_cities_along_route_from_gps_log.png)
 *Municipalities intersected by a route from Nagoya Station to Haneda Airport — generated with [`sql/02_analysis/02-05c_list_cities_along_route_from_gps_log.sql`](sql/02_analysis/02-05c_list_cities_along_route_from_gps_log.sql) + QGIS*
 
 ### 📦 Customer Distribution & Territory Design
@@ -137,7 +137,9 @@ gis-trade-area-analysis/
 │   └── 99_snippets/
 │       └── gis_utils/        # Importable GIS utility library
 ├── data/                     # Sample CSV data for testing templates
-├── output/                   # Map output examples (QGIS screenshots)
+├── output/
+│   ├── sql/                  # Map output examples from SQL + QGIS workflows
+│   └── python/               # Chart and plot output from Python scripts
 └── docs/                     # Extended documentation
     └── census_jp_README.md   # Census data schema & ingestion design
 ```
