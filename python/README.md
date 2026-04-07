@@ -19,6 +19,20 @@ Python tools for GIS data processing, spatial analysis, and visualization. Compl
 
 ---
 
+## 01_data_analytics — Scripts
+
+Statistical analysis and non-spatial visualization using pandas, numpy, and matplotlib.
+Reads data from PostgreSQL via psycopg2. Credentials loaded from `AccessKeys/my_access.py`.
+
+| File | Purpose | Output |
+|------|---------|--------|
+| [01-01_scatter_density_vs_elderly_rate.py](01_data_analytics/01-01_scatter_density_vs_elderly_rate.py) | Bubble scatter: population density vs elderly rate, colored by region, outlier-labeled | [PNG](../output/python/01-01_scatter_density_vs_elderly_rate.png) |
+
+![Population density vs elderly rate](../output/python/01-01_scatter_density_vs_elderly_rate.png)
+*Population density vs elderly rate by municipality (2020 Census) — bubble size = population, color = region, dashed line = OLS trend*
+
+---
+
 ## 99_snippets/gis_utils — Utility Library
 
 An importable Python package for common GIS coordinate operations in Japan.
