@@ -122,10 +122,6 @@ bot_outliers = df_candidates.nsmallest(OUTLIER_N, 'residual')   # below trend li
 reg_x = np.linspace(df['log_density'].min(), df['log_density'].max(), 300)
 reg_y = np.polyval(coeffs, reg_x)
 
-# National medians for quadrant dividers
-med_log_density = df['log_density'].median()
-med_elderly     = df['elderly_rate'].median()
-
 # ---------------------------------------------------------------------------
 # Plot
 # ---------------------------------------------------------------------------
@@ -150,10 +146,6 @@ for region, color in REGION_COLORS.items():
 ax.plot(reg_x, reg_y,
         color='#333333', linewidth=1.8, linestyle='--',
         label=f'Trend (OLS,  slope={coeffs[0]:.2f})')
-
-# --- Median dividers ---
-ax.axvline(med_log_density, color='gray', linewidth=0.8, linestyle=':', alpha=0.6)
-ax.axhline(med_elderly,     color='gray', linewidth=0.8, linestyle=':', alpha=0.6)
 
 # --- Quadrant labels ---
 xmin, xmax = df['log_density'].min(), df['log_density'].max()
