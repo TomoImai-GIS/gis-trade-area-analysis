@@ -35,6 +35,9 @@ Aggregate population, elderly rate, household data, and population density withi
 ### 👴 Demographic & Aging Analysis
 Rank municipalities by elderly population rate with flexible region and population filters. Used for **healthcare facility planning** and **senior services market research**.
 
+![Population density vs elderly rate](output/python/01-01_scatter_density_vs_elderly_rate.png)
+*Population density vs elderly rate by municipality (2020 Census) — bubble size = population, color = region, dashed line = OLS trend. Generated with [`python/01_data_analytics/01-01_scatter_density_vs_elderly_rate.py`](python/01_data_analytics/01-01_scatter_density_vs_elderly_rate.py) — see [Python README](python/README.md) for details.*
+
 ### 🚚 Delivery Area Assignment & Route Analysis
 Assign municipalities to their nearest depot; calculate route length through each prefecture or municipality from waypoints or a GPS log table. Built for **delivery network design** and **vehicle routing analysis**.
 
