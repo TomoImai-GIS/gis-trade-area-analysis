@@ -38,8 +38,9 @@ import my_access as ma
 # Parameters  (edit here)
 # ---------------------------------------------------------------------------
 TARGET_DB      = 'gis'
-MIN_POPULATION = 5000    # municipalities below this threshold are excluded
-OUTLIER_N      = 5       # number of outlier municipalities to label per side
+MIN_POPULATION    = 5000    # municipalities below this threshold are excluded
+OUTLIER_N         = 5       # number of outlier municipalities to label per side
+OUTLIER_MIN_POP   = 50_000  # only municipalities above this size are outlier candidates
 
 OUTPUT_DIR  = os.path.normpath(
     os.path.join(os.path.dirname(__file__), '..', '..', 'output')
@@ -111,8 +112,10 @@ df['bubble_size'] = ((np.sqrt(df['population']) / np.sqrt(max_pop)) * 400).clip(
 coeffs = np.polyfit(df['log_density'], df['elderly_rate'], deg=1)
 df['residual'] = df['elderly_rate'] - np.polyval(coeffs, df['log_density'])
 
-top_outliers = df.nlargest(OUTLIER_N, 'residual')    # above trend line
-bot_outliers = df.nsmallest(OUTLIER_N, 'residual')   # below trend line
+# Restrict outlier candidates to municipalities above size threshold
+df_candidates = df[df['population'] >= OUTLIER_MIN_POP]
+top_outliers = df_candidates.nlargest(OUTLIER_N, 'residual')    # above trend line
+bot_outliers = df_candidates.nsmallest(OUTLIER_N, 'residual')   # below trend line
 
 # Regression line points for plotting
 reg_x = np.linspace(df['log_density'].min(), df['log_density'].max(), 300)
@@ -154,13 +157,13 @@ ax.axhline(med_elderly,     color='gray', linewidth=0.8, linestyle=':', alpha=0.
 # --- Quadrant labels ---
 xmin, xmax = df['log_density'].min(), df['log_density'].max()
 ymin, ymax = df['elderly_rate'].min(), df['elderly_rate'].max()
-quad_style = dict(fontsize=8, color='#888888', va='top')
+quad_style = dict(fontsize=10, color='#888888', va='top')
 ax.text(xmin + 0.05, ymax - 0.3, 'High aging / Low density',  **quad_style)
 ax.text(xmax - 0.05, ymax - 0.3, 'High aging / High density', **quad_style, ha='right')
 ax.text(xmin + 0.05, ymin + 0.5, 'Low aging / Low density',
-        fontsize=8, color='#888888', va='bottom')
+        fontsize=10, color='#888888', va='bottom')
 ax.text(xmax - 0.05, ymin + 0.5, 'Low aging / High density',
-        fontsize=8, color='#888888', va='bottom', ha='right')
+        fontsize=10, color='#888888', va='bottom', ha='right')
 
 # --- Outlier labels ---
 for _, row in pd.concat([top_outliers, bot_outliers]).iterrows():
@@ -200,6 +203,7 @@ region_patches = [
 legend_region = ax.legend(
     handles=region_patches,
     title='Region', loc='upper right',
+    bbox_to_anchor=(0.99, 0.80),   # shift down to clear "High aging / High density" label
     fontsize=8, title_fontsize=9, framealpha=0.85
 )
 
@@ -209,6 +213,7 @@ for ref_pop, label in [(50_000, '50k'), (500_000, '500k'), (3_000_000, '3M')]:
     ax.scatter([], [], s=ref_size, c='gray', alpha=0.5, label=label)
 
 ax.legend(title='Population', loc='lower left',
+          bbox_to_anchor=(0.01, 0.18),   # shift up to clear "Low aging / Low density" label
           fontsize=8, title_fontsize=9, framealpha=0.85)
 ax.add_artist(legend_region)   # restore region legend overwritten above
 
