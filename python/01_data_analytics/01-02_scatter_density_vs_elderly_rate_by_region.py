@@ -178,7 +178,7 @@ fig.supylabel('Elderly Rate  (%, aged 65+)', fontsize=11, x=0.005)
 
 fig.suptitle(
     'Population Density vs Elderly Rate by Region — Japan (2020 Census)',
-    fontsize=14, y=1.01
+    fontsize=14, y=0.98
 )
 
 fig.text(
@@ -189,7 +189,7 @@ fig.text(
     fontsize=7.5, color='gray',
 )
 
-plt.tight_layout()
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])  # reserve space for suptitle (top) and source note (bottom)
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 out_path = os.path.join(OUTPUT_DIR, OUTPUT_FILE)
