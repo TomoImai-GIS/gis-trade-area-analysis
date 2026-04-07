@@ -1,16 +1,17 @@
 # GIS Trade Area Analysis
 
-> Production-ready PostGIS SQL templates for spatial analysis and location intelligence in Japan.
+> Spatial analysis toolkit for Japan — PostGIS SQL templates and Python GIS utilities for location intelligence.
 
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12%2B-336791?logo=postgresql&logoColor=white)
 ![PostGIS](https://img.shields.io/badge/PostGIS-3.0%2B-4CAF50)
 ![QGIS](https://img.shields.io/badge/QGIS-3.x-589632?logo=qgis&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)
 
 ---
 
 ## Overview
 
-A collection of spatial SQL templates built on PostgreSQL + PostGIS, focused on Japanese administrative boundary and census data. Each template is designed for a real-world business scenario — retail site selection, delivery optimization, and demographic analysis — and can be run immediately by editing the `WITH params AS (...)` block at the top.
+A spatial analysis toolkit built on PostgreSQL + PostGIS and Python, focused on Japanese administrative boundary and census data. The SQL templates cover real-world business scenarios — retail site selection, delivery optimization, and demographic analysis — and can be run immediately by editing the `WITH params AS (...)` block at the top. The Python tools provide coordinate utilities, data processing, and QGIS automation to complement the SQL workflows.
 
 Census data covers **1,917 municipalities** across Japan (2015 & 2020, sourced from e-Stat). Administrative boundary geometries are sourced from the national land information portal (国土数値情報, MLIT).
 
@@ -56,6 +57,22 @@ Geocode customer records to municipality level, calculate penetration rates agai
 | [`sql/03_visualization/`](sql/03_visualization/) | 1 | Municipality polygon output with demographic breakdown for QGIS choropleth (elderly rate, population density, and more) |
 
 → **[Full template index with code examples and output descriptions](sql/README.md)**
+
+---
+
+## Python Tools
+
+Utility scripts and an importable library for coordinate operations, data processing, and QGIS automation. Designed to complement the SQL templates above.
+
+| Folder | Purpose |
+|--------|---------|
+| [`python/99_snippets/gis_utils/`](python/99_snippets/gis_utils/) | Importable library: JIS mesh code, DMS ↔ decimal degrees, WGS84 ↔ Japan Plane Rectangular |
+| [`python/01_data_analytics/`](python/01_data_analytics/) | Distribution analysis, regression, non-spatial visualization (pandas, numpy, matplotlib) |
+| [`python/02_QGIS_automation/`](python/02_QGIS_automation/) | Multi-layer map automation via QGIS Python console |
+| [`python/03_data_cleansing/`](python/03_data_cleansing/) | Data quality checks and cleanup — null coordinates, encoding errors, duplicate records |
+| [`python/04_data_conversion/`](python/04_data_conversion/) | Format conversion between CSV, Excel, GeoJSON, and Shapefile |
+
+→ **[Full Python tools index and usage examples](python/README.md)**
 
 ---
 
@@ -105,16 +122,24 @@ psql -d your_database -f sql/02_analysis/02-01_calc_trade_area_population.sql
 
 ```
 gis-trade-area-analysis/
-├── sql/                  # SQL templates
-│   ├── README.md         # Full template index with code examples
-│   ├── 01_basic/         # Foundational spatial operations (3 templates)
-│   ├── 02_analysis/      # Core spatial analysis (8 templates)
-│   └── 03_visualization/ # QGIS / map output queries (1 template)
-├── data/                 # Sample CSV data for testing templates
-├── output/               # Map output examples (QGIS screenshots)
-├── docs/                 # Extended documentation
-│   └── census_jp_README.md  # Census data schema & ingestion design
-└── python/               # Python tools (coming soon)
+├── sql/                      # SQL templates (15 production-ready)
+│   ├── README.md             # Full template index with code examples
+│   ├── 01_basic/             # Foundational spatial operations (3 templates)
+│   ├── 02_analysis/          # Core spatial analysis (8 templates)
+│   └── 03_visualization/     # QGIS / map output queries (1 template)
+├── python/                   # Python tools
+│   ├── README.md             # Full tool index and usage examples
+│   ├── 00_notebooks/         # Jupyter Notebook showcase
+│   ├── 01_data_analytics/    # Data analysis and non-spatial visualization
+│   ├── 02_QGIS_automation/   # QGIS Python console scripts
+│   ├── 03_data_cleansing/    # Data quality checks and cleanup
+│   ├── 04_data_conversion/   # Format conversion utilities
+│   └── 99_snippets/
+│       └── gis_utils/        # Importable GIS utility library
+├── data/                     # Sample CSV data for testing templates
+├── output/                   # Map output examples (QGIS screenshots)
+└── docs/                     # Extended documentation
+    └── census_jp_README.md   # Census data schema & ingestion design
 ```
 
 ---
