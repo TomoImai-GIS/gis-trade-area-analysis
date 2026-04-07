@@ -29,11 +29,11 @@ Reads data from PostgreSQL via psycopg2. Credentials loaded from `AccessKeys/my_
 | [01-01_scatter_density_vs_elderly_rate.py](01_data_analytics/01-01_scatter_density_vs_elderly_rate.py) | Bubble scatter: population density vs elderly rate, colored by region, outlier-labeled | [PNG](../output/python/01-01_scatter_density_vs_elderly_rate.png) |
 | [01-02_scatter_density_vs_elderly_rate_by_region.py](01_data_analytics/01-02_scatter_density_vs_elderly_rate_by_region.py) | 8-panel version of 01-01: one subplot per region, regional vs national OLS trend comparison | [PNG](../output/python/01-02_scatter_density_vs_elderly_rate_by_region.png) |
 
-![Population density vs elderly rate by region](../output/python/01-02_scatter_density_vs_elderly_rate_by_region.png)
-*8-panel view by region — dark dashed = regional trend, gray dashed = national trend (reference)*
-
 ![Population density vs elderly rate](../output/python/01-01_scatter_density_vs_elderly_rate.png)
 *Population density vs elderly rate by municipality (2020 Census) — bubble size = population, color = region, dashed line = OLS trend*
+
+![Population density vs elderly rate by region](../output/python/01-02_scatter_density_vs_elderly_rate_by_region.png)
+*8-panel view by region — dark dashed = regional trend, gray dashed = national trend (reference)*
 
 ---
 
