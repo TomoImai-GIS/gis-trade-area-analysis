@@ -46,15 +46,27 @@ OUTPUT_DIR  = os.path.normpath(
 )
 OUTPUT_FILE = '01-01_scatter_density_vs_elderly_rate.png'
 
+# Mapping from DB values (Japanese) to English display labels
+REGION_MAP = {
+    '北海道':   'Hokkaido',
+    '東北':     'Tohoku',
+    '関東':     'Kanto',
+    '中部':     'Chubu',
+    '近畿':     'Kinki',
+    '中国':     'Chugoku',
+    '四国':     'Shikoku',
+    '九州沖縄': 'Kyushu / Okinawa',
+}
+
 REGION_COLORS = {
-    '北海道':   '#1f77b4',
-    '東北':     '#ff7f0e',
-    '関東':     '#d62728',
-    '中部':     '#2ca02c',
-    '近畿':     '#9467bd',
-    '中国':     '#8c564b',
-    '四国':     '#e377c2',
-    '九州沖縄': '#7f7f7f',
+    'Hokkaido':         '#1f77b4',
+    'Tohoku':           '#ff7f0e',
+    'Kanto':            '#d62728',
+    'Chubu':            '#2ca02c',
+    'Kinki':            '#9467bd',
+    'Chugoku':          '#8c564b',
+    'Shikoku':          '#e377c2',
+    'Kyushu / Okinawa': '#7f7f7f',
 }
 
 # ---------------------------------------------------------------------------
@@ -66,7 +78,7 @@ conn = psycopg2.connect(
 
 query = """
     SELECT
-        full_name,
+        city_name_en,
         region,
         population,
         elderly_rate,
@@ -82,6 +94,9 @@ query = """
 df = pd.read_sql(query, conn, params={'min_pop': MIN_POPULATION})
 conn.close()
 print(f'Loaded {len(df):,} municipalities.')
+
+# Map region values from Japanese (DB) to English (display)
+df['region'] = df['region'].map(REGION_MAP).fillna('Other')
 
 # ---------------------------------------------------------------------------
 # Derived columns
@@ -150,7 +165,7 @@ ax.text(xmax - 0.05, ymin + 0.5, 'Low aging / High density',
 # --- Outlier labels ---
 for _, row in pd.concat([top_outliers, bot_outliers]).iterrows():
     ax.annotate(
-        row['full_name'],
+        row['city_name_en'],
         xy=(row['log_density'], row['elderly_rate']),
         xytext=(6, 2),
         textcoords='offset points',
