@@ -24,6 +24,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from matplotlib.ticker import FixedLocator
 import psycopg2
 
 # ---------------------------------------------------------------------------
@@ -191,6 +192,23 @@ ax.set_title(
 xtick_vals = [1, 10, 100, 1_000, 10_000]
 ax.set_xticks([np.log10(v) for v in xtick_vals])
 ax.set_xticklabels([f'{v:,}' for v in xtick_vals])
+
+# X minor ticks: log10 positions of 2-9 within each decade
+x_minor = [np.log10(m * 10 ** d) for d in range(0, 5) for m in range(2, 10)]
+x_minor = [v for v in x_minor
+           if df['log_density'].min() - 0.05 <= v <= df['log_density'].max() + 0.05]
+ax.xaxis.set_minor_locator(FixedLocator(x_minor))
+
+# Y major ticks every 10, minor at every 5 (between majors)
+y_major = np.arange(10, 60, 10)   # 10, 20, 30, 40, 50
+y_minor = np.arange(5,  60, 10)   #  5, 15, 25, 35, 45, 55
+ax.yaxis.set_major_locator(FixedLocator(y_major))
+ax.yaxis.set_minor_locator(FixedLocator(y_minor))
+
+# Grid lines (drawn below all artists)
+ax.set_axisbelow(True)
+ax.grid(which='major', color='#dddddd', linewidth=0.8, linestyle='-')
+ax.grid(which='minor', color='#eeeeee', linewidth=0.4, linestyle='-')
 
 # ---------------------------------------------------------------------------
 # Legends
