@@ -87,9 +87,20 @@ GROUP_CONFIG = [
 TARGET_DB            = 'gis'
 MIN_POPULATION_TREND = 5_000   # population filter for national trend line
 
-# Build lookup structures
-all_codes     = [c['code'] for grp in GROUP_CONFIG for c in grp['cities']]
-code_to_group = {c['code']: grp for grp in GROUP_CONFIG for c in grp['cities']}
+
+def fmt_code(code) -> str:
+    """Return city_code as a zero-padded 5-digit string.
+
+    Handles both int and str input so users can write either form in
+    GROUP_CONFIG.  Single-digit prefecture codes are padded correctly,
+    e.g.  1219 → '01219'  (Hokkaido),  13102 → '13102'  (Tokyo Chuo-ku).
+    """
+    return str(code).zfill(5)
+
+
+# Build lookup structures  (always use 5-digit string keys)
+all_codes     = [fmt_code(c['code']) for grp in GROUP_CONFIG for c in grp['cities']]
+code_to_group = {fmt_code(c['code']): grp for grp in GROUP_CONFIG for c in grp['cities']}
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -138,7 +149,7 @@ print(f"National 2020 : {len(df_nat):,} municipalities")
 print(f"Cities loaded : {df_cities['city_code'].nunique()} cities  "
       f"({len(df_cities)} rows total)")
 
-# Warn about any missing city/year
+# Warn about any missing city/year  (all_codes already contains 5-digit strings)
 for code in all_codes:
     for yr in (2015, 2020):
         if df_cities[(df_cities['city_code'] == code) &
@@ -187,7 +198,7 @@ for grp in GROUP_CONFIG:
     color = grp['color']
 
     for city in grp['cities']:
-        code = city['code']
+        code = fmt_code(city['code'])   # always 5-digit string
         name = city['name']
 
         r15 = df_cities[(df_cities['city_code']   == code) &
