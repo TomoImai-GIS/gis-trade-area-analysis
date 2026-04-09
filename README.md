@@ -38,6 +38,10 @@ Rank municipalities by elderly population rate with flexible region and populati
 ![Population density vs elderly rate](output/python/01-01_scatter_density_vs_elderly_rate.png)
 *Population density vs elderly rate by municipality (2020 Census) — bubble size = population, color = region, dashed line = OLS trend. Generated with [`python/01_data_analytics/01-01_scatter_density_vs_elderly_rate.py`](python/01_data_analytics/01-01_scatter_density_vs_elderly_rate.py) — see [Python README](python/README.md) for details.*
 
+The national scatter plot is not static. Tracking **how municipalities moved between 2015 and 2020** reveals four distinct demographic trajectories: urban cores are rejuvenating, inner suburbs are aging faster than expected, outer suburbs face a slow squeeze, and rural areas are entering freefall. Each trajectory carries different implications for retail siting, healthcare planning, and local fiscal sustainability.
+
+→ **[Urban Aging Dynamics: 2015–2020 shift analysis with hypothesis testing](docs/analysis/01-03_urban_aging_dynamics.md)**
+
 ### 🚚 Delivery Area Assignment & Route Analysis
 Assign municipalities to their nearest depot; calculate route length through each prefecture or municipality from waypoints or a GPS log table. Built for **delivery network design** and **vehicle routing analysis**.
 
@@ -143,7 +147,10 @@ gis-trade-area-analysis/
 ├── output/
 │   ├── sql/                  # Map output examples from SQL + QGIS workflows
 │   └── python/               # Chart and plot output from Python scripts
-└── docs/                     # Extended documentation
+└── docs/                     # Analysis write-ups and extended documentation
+    ├── README.md             # Analysis index
+    ├── analysis/             # In-depth analysis documents (hypothesis → verification → implications)
+    ├── images/               # Concept diagrams and hand-drawn figures
     └── census_jp_README.md   # Census data schema & ingestion design
 ```
 
