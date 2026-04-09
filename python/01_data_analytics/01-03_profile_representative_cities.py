@@ -41,6 +41,15 @@ import my_access as ma
 # ===========================================================================
 # ★ EDIT HERE: 8 representative municipalities  (2 cities per group A–D)
 #   Verify city_code values against 01-04_cluster_assignments.csv
+#
+#   label_offset : (x, y) in display points from the 2020 bubble centre.
+#                  Positive x → right,  positive y → up.
+#                  Increase the magnitude to move the label further away.
+#   label_ha     : horizontal alignment of the label text.
+#                  'left'  → label extends rightward from the anchor point.
+#                  'right' → label extends leftward  from the anchor point.
+#                  Use 'right' when label_offset x is negative (label is to
+#                  the left of the bubble).
 # ===========================================================================
 GROUP_CONFIG = [
     {
@@ -48,8 +57,10 @@ GROUP_CONFIG = [
         'label': 'Urban Core',
         'color': '#e74c3c',      # coral red
         'cities': [
-            {'code': 13102, 'name': 'Chuo-ku'},       # 中央区
-            {'code': 13103, 'name': 'Minato-ku'},      # 港区
+            {'code': 13102, 'name': 'Chuo-ku',
+             'label_offset': ( 12, -20), 'label_ha': 'left'},   # 中央区
+            {'code': 13103, 'name': 'Minato-ku',
+             'label_offset': (-12,  12), 'label_ha': 'right'},  # 港区
         ],
     },
     {
@@ -57,8 +68,10 @@ GROUP_CONFIG = [
         'label': 'Urban Residential',
         'color': '#f39c12',      # amber
         'cities': [
-            {'code': 13112, 'name': 'Setagaya-ku'},    # 世田谷区
-            {'code': 13114, 'name': 'Suginami-ku'},    # 杉並区
+            {'code': 13112, 'name': 'Setagaya-ku',
+             'label_offset': (-12,  16), 'label_ha': 'right'},  # 世田谷区
+            {'code': 13114, 'name': 'Suginami-ku',
+             'label_offset': ( 12, -18), 'label_ha': 'left'},   # 杉並区
         ],
     },
     {
@@ -66,8 +79,10 @@ GROUP_CONFIG = [
         'label': 'Suburban',
         'color': '#1abc9c',      # teal green
         'cities': [
-            {'code': 13201, 'name': 'Hachioji-shi'},   # 八王子市
-            {'code': 13209, 'name': 'Machida-shi'},    # 町田市
+            {'code': 13201, 'name': 'Hachioji-shi',
+             'label_offset': (-12,  10), 'label_ha': 'right'},  # 八王子市
+            {'code': 13209, 'name': 'Machida-shi',
+             'label_offset': ( 12,  10), 'label_ha': 'left'},   # 町田市
         ],
     },
     {
@@ -75,8 +90,10 @@ GROUP_CONFIG = [
         'label': 'Rural',
         'color': '#8e44ad',      # purple
         'cities': [
-            {'code': 13307, 'name': 'Okutama-machi'},  # 奥多摩町
-            {'code': 13361, 'name': 'Oshima-machi'},   # 大島町
+            {'code': 13307, 'name': 'Okutama-machi',
+             'label_offset': ( 10,   6), 'label_ha': 'left'},   # 奥多摩町
+            {'code': 13361, 'name': 'Oshima-machi',
+             'label_offset': ( 10,   6), 'label_ha': 'left'},   # 大島町
         ],
     },
 ]
@@ -242,12 +259,22 @@ for grp in GROUP_CONFIG:
             zorder=3,
         )
 
-        # City name label (offset from 2020 bubble)
+        # City name label with thin leader line from 2020 bubble edge
+        lbl_offset = city.get('label_offset', (10, 6))
+        lbl_ha     = city.get('label_ha', 'left')
         ax.annotate(
             name,
             xy=(x20, y20),
-            xytext=(7, 4), textcoords='offset points',
+            xytext=lbl_offset, textcoords='offset points',
             fontsize=10, color=color, fontweight='bold',
+            ha=lbl_ha, va='center',
+            arrowprops=dict(
+                arrowstyle='-',
+                color=color,
+                lw=0.8,
+                shrinkA=2,                               # gap at label end
+                shrinkB=max(4.0, np.sqrt(s20 / np.pi) * 0.85),  # gap at bubble edge
+            ),
             zorder=6,
         )
 
