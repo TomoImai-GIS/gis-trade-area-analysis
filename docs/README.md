@@ -8,7 +8,7 @@ and links to the Python/SQL scripts and output figures that support it.
 
 | Document | Topic | Key Scripts |
 |---|---|---|
-| [Urban Aging Dynamics (2015–2020)](analysis/01-03_urban_aging_dynamics.md) | How population density and elderly rate shifted across four urban-type groups in Tokyo | `01-03`, `01-04`, `01-05` |
+| [Urban Aging Dynamics (2015–2020)](analysis/01-03_urban_aging_dynamics.md) | How population density and elderly rate shifted across four urban-type groups in Tokyo | Python `01-03`, `01-04`, `01-05` |
 
 ---
 
