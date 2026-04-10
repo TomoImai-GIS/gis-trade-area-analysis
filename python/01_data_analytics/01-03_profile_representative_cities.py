@@ -137,7 +137,13 @@ SELECT
     cp.survey_year,
     cp.population,
     ROUND(cp.density::numeric, 1)                                 AS pop_density,
-    ROUND(cp.gt_65::numeric / NULLIF(cp.population, 0) * 100, 1) AS elderly_rate
+    ROUND(cp.gt_65::numeric / NULLIF(cp.population, 0) * 100, 1) AS elderly_rate,
+    cp.lt_15,
+    cp.mid_15_64,
+    cp.gt_65,
+    cp.lt_15_rate,
+    cp.mid_15_64_rate,
+    cp.gt_65_rate
 FROM  e_stat.census_population cp
 WHERE cp.survey_year IN (2015, 2020)
   AND cp.city_code  IN %(codes)s
@@ -338,4 +344,232 @@ plt.tight_layout(rect=[0, 0.03, 1, 1])
 out_fig1 = os.path.join(SCRIPT_DIR, '01-03_scatter_shift.png')
 fig.savefig(out_fig1, dpi=150, bbox_inches='tight', facecolor='white')
 print(f"\nSaved → {out_fig1}")
+plt.close()
+
+# ===========================================================================
+# Figure 2: Age Composition — stacked bars (2015 / 2020) + Δ pp bars
+# ===========================================================================
+
+# ── Constants ────────────────────────────────────────────────────────────
+AGE_KEYS       = ['lt_15', 'mid_15_64', 'gt_65']
+AGE_RATE_COLS  = ['lt_15_rate', 'mid_15_64_rate', 'gt_65_rate']
+AGE_COLORS_MAP = {
+    'lt_15':     '#66bb6a',   # green
+    'mid_15_64': '#5c6bc0',   # indigo
+    'gt_65':     '#ef5350',   # red
+}
+AGE_LABELS_MAP = {
+    'lt_15':     'Under 15',
+    'mid_15_64': 'Ages 15–64',
+    'gt_65':     'Ages 65+',
+}
+
+CITY_SP  = 0.92   # x-spacing between cities within a group
+GROUP_SP = 1.40   # extra gap between groups
+
+# Build ordered list of (code, group_cfg) following GROUP_CONFIG order
+city_order2 = [
+    (fmt_code(c['code']), grp)
+    for grp in GROUP_CONFIG
+    for c in grp['cities']
+]
+
+# Assign x-positions
+x_positions = {}
+x = 0.0
+for i, (code, grp) in enumerate(city_order2):
+    x_positions[code] = x
+    # Add a gap between groups (but not after the last city)
+    if i < len(city_order2) - 1:
+        next_grp = city_order2[i + 1][1]
+        if next_grp is not grp:
+            x += GROUP_SP
+        else:
+            x += CITY_SP
+
+BAR_W = 0.38   # width of each year's bar
+YEAR_OFF = {2015: -BAR_W / 2, 2020: BAR_W / 2}   # left / right of x centre
+
+# ── Figure layout ─────────────────────────────────────────────────────────
+fig2, (ax_top, ax_bot) = plt.subplots(
+    2, 1, figsize=(18, 11),
+    gridspec_kw={'height_ratios': [5, 4]},
+    sharex=False,
+)
+fig2.patch.set_facecolor('white')
+
+# ── Group background shading (both panels) ────────────────────────────────
+for ax_panel in (ax_top, ax_bot):
+    for grp in GROUP_CONFIG:
+        codes_in_grp = [fmt_code(c['code']) for c in grp['cities']]
+        xs = [x_positions[cd] for cd in codes_in_grp if cd in x_positions]
+        if not xs:
+            continue
+        x_lo = min(xs) - CITY_SP * 0.55
+        x_hi = max(xs) + CITY_SP * 0.55
+        ax_panel.axvspan(x_lo, x_hi, color=grp['color'], alpha=0.14, zorder=0)
+
+# ── Top panel: stacked composition bars ───────────────────────────────────
+alpha_map = {2015: 0.58, 2020: 0.92}
+
+for code, grp in city_order2:
+    xc = x_positions[code]
+    for yr in (2015, 2020):
+        row = df_cities[(df_cities['city_code'] == code) &
+                        (df_cities['survey_year'] == yr)]
+        if row.empty:
+            continue
+        row = row.iloc[0]
+        alpha = alpha_map[yr]
+        xb = xc + YEAR_OFF[yr]
+        bottom = 0.0
+        for key, col in zip(AGE_KEYS, AGE_RATE_COLS):
+            val = float(row[col]) if pd.notna(row[col]) else 0.0
+            ax_top.bar(xb, val, width=BAR_W, bottom=bottom,
+                       color=AGE_COLORS_MAP[key], alpha=alpha,
+                       linewidth=0, zorder=3)
+            bottom += val
+
+# Year labels above each pair
+for code, grp in city_order2:
+    xc = x_positions[code]
+    for yr in (2015, 2020):
+        row = df_cities[(df_cities['city_code'] == code) &
+                        (df_cities['survey_year'] == yr)]
+        if row.empty:
+            continue
+        total = 100.0   # rates should sum to ~100
+        ax_top.text(xc + YEAR_OFF[yr], total + 0.5,
+                    str(yr), ha='center', va='bottom',
+                    fontsize=7.5, color='#555555', rotation=0)
+
+# City name x-tick labels for top panel
+xtick_pos   = [x_positions[cd] for cd, _ in city_order2]
+xtick_names = [code_to_name.get(cd, f'[{cd}]') for cd, _ in city_order2]
+ax_top.set_xticks(xtick_pos)
+ax_top.set_xticklabels(xtick_names, fontsize=10, rotation=20, ha='right')
+
+ax_top.set_ylabel('Age Composition (%)', fontsize=11)
+ax_top.set_ylim(0, 108)
+ax_top.set_xlim(min(xtick_pos) - CITY_SP * 0.70,
+                max(xtick_pos) + CITY_SP * 0.70)
+ax_top.grid(axis='y', color='#dddddd', linewidth=0.8, zorder=0)
+ax_top.set_axisbelow(True)
+ax_top.set_title(
+    'Age Composition & Change: 2015 vs 2020  —  8 Representative Municipalities (Tokyo)',
+    fontsize=13, fontweight='bold', pad=10,
+)
+
+# Legend (top panel)
+comp_patches = [
+    mpatches.Patch(color=AGE_COLORS_MAP[k], label=AGE_LABELS_MAP[k])
+    for k in AGE_KEYS
+]
+yr2015_patch = mpatches.Patch(facecolor='#aaaaaa', alpha=0.58, label='2015  (lighter)')
+yr2020_patch = mpatches.Patch(facecolor='#aaaaaa', alpha=0.92, label='2020  (darker)')
+grp_patches2 = [
+    mpatches.Patch(color=grp['color'],
+                   label=f"Group {grp['group']}: {grp['label']}")
+    for grp in GROUP_CONFIG
+]
+ax_top.legend(
+    handles=comp_patches + [yr2015_patch, yr2020_patch] + grp_patches2,
+    fontsize=9, framealpha=0.95,
+    loc='upper left', bbox_to_anchor=(1.02, 1.0),
+    borderaxespad=0, ncol=1,
+)
+
+# ── Bottom panel: age-group population growth rate (%) ───────────────────
+#   = (count_2020 − count_2015) / count_2015 × 100
+#   Reveals "which layer drove the composition shift" rather than
+#   simply restating the composition-share change shown in the top panel.
+DELTA_W = 0.22    # width per age-group bar within one city slot
+DELTA_OFFSETS = {
+    'lt_15':     -DELTA_W,
+    'mid_15_64':  0.0,
+    'gt_65':      DELTA_W,
+}
+# Absolute-count columns (no '_rate' suffix)
+AGE_COUNT_COLS = AGE_KEYS   # ['lt_15', 'mid_15_64', 'gt_65']
+
+for code, grp in city_order2:
+    xc = x_positions[code]
+    r15 = df_cities[(df_cities['city_code'] == code) &
+                    (df_cities['survey_year'] == 2015)]
+    r20 = df_cities[(df_cities['city_code'] == code) &
+                    (df_cities['survey_year'] == 2020)]
+    if r15.empty or r20.empty:
+        continue
+    r15, r20 = r15.iloc[0], r20.iloc[0]
+
+    for key in AGE_COUNT_COLS:
+        v15 = float(r15[key]) if pd.notna(r15[key]) else None
+        v20 = float(r20[key]) if pd.notna(r20[key]) else None
+        if v15 is None or v20 is None or v15 == 0:
+            continue
+        growth_pct = (v20 - v15) / v15 * 100
+        xb = xc + DELTA_OFFSETS[key]
+        color = AGE_COLORS_MAP[key]
+        ax_bot.bar(xb, growth_pct, width=DELTA_W * 0.88,
+                   color=color, alpha=0.85,
+                   linewidth=0, zorder=3)
+        # Value annotation — skip if too small to read clearly
+        va_pos = 'bottom' if growth_pct >= 0 else 'top'
+        y_ann  = growth_pct + (0.4 if growth_pct >= 0 else -0.4)
+        ax_bot.text(xb, y_ann, f'{growth_pct:+.1f}%',
+                    ha='center', va=va_pos,
+                    fontsize=7.0, color='#333333', zorder=4)
+
+ax_bot.axhline(0, color='#888888', linewidth=1.0, zorder=2)
+ax_bot.set_xticks(xtick_pos)
+ax_bot.set_xticklabels(xtick_names, fontsize=10, rotation=20, ha='right')
+ax_bot.set_ylabel('Population Growth by Age Group\n(2020 vs 2015, %)', fontsize=11)
+ax_bot.set_xlim(ax_top.get_xlim())
+ax_bot.grid(axis='y', color='#dddddd', linewidth=0.8, zorder=0)
+ax_bot.set_axisbelow(True)
+
+# Legend (bottom panel)
+delta_patches = [
+    mpatches.Patch(color=AGE_COLORS_MAP[k], alpha=0.85,
+                   label=f'{AGE_LABELS_MAP[k]} growth rate')
+    for k in AGE_KEYS
+]
+ax_bot.legend(handles=delta_patches, fontsize=9, framealpha=0.95,
+              loc='upper left', bbox_to_anchor=(1.02, 1.0),
+              borderaxespad=0)
+
+# ── Group name labels: bottom panel only, watermark style ─────────────────
+#   Placed behind bars (zorder=1) at vertical centre of the panel.
+#   Group colour at low alpha → readable but non-intrusive.
+ax_bot.set_ylim(-25, 48)   # ylim centre ≈ 11.5; use 10 as label y
+
+for grp in GROUP_CONFIG:
+    _codes = [fmt_code(c['code']) for c in grp['cities']]
+    _xs    = [x_positions[cd] for cd in _codes if cd in x_positions]
+    if not _xs:
+        continue
+    _x_right = max(_xs) + CITY_SP * 0.50   # close to right edge of group shading
+    ax_bot.text(
+        _x_right, 45,
+        f'Group {grp["group"]}',
+        ha='right', va='top',
+        fontsize=25, fontweight='bold',
+        color=grp['color'], alpha=0.30,
+        zorder=1,
+    )
+
+# ── Source note ───────────────────────────────────────────────────────────
+fig2.text(
+    0.5, 0.01,
+    'Source: e-Stat 2015 / 2020 Population Census  |  '
+    'top: age composition shares (lt_15_rate / mid_15_64_rate / gt_65_rate)  |  '
+    'bottom: (count_2020 − count_2015) / count_2015 × 100',
+    ha='center', fontsize=8.5, color='#888888',
+)
+
+plt.tight_layout(rect=[0, 0.03, 0.82, 1])
+
+out_fig2 = os.path.join(SCRIPT_DIR, '01-03_age_composition.png')
+fig2.savefig(out_fig2, dpi=150, bbox_inches='tight', facecolor='white')
+print(f"Saved → {out_fig2}")
 plt.close()

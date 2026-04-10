@@ -179,6 +179,51 @@ can deteriorate rapidly once a threshold of depopulation is crossed.
 
 ---
 
+## 5.1 Age Composition & Population Growth by Age Group
+
+The scatter-shift plot shows *where* each municipality moved on the density × elderly-rate plane,
+but it does not reveal *why* the elderly rate rose or fell.
+The following figure disaggregates that movement into age-group composition and absolute growth rates.
+
+![Age Composition & Growth by Age Group](../../output/python/01-03_age_composition.png)
+
+*Top: age composition shares (Under 15 / Ages 15–64 / Ages 65+) for 2015 (lighter) and 2020 (darker).
+Bottom: population growth rate within each age group between 2015 and 2020
+((count₂₀₂₀ − count₂₀₁₅) / count₂₀₁₅ × 100).*
+
+---
+
+**Group A — "All layers grew; youth grew fastest"**
+
+The key insight for Group A is visible in the bottom panel:
+every age group increased in absolute numbers, but the Under-15 cohort grew at a dramatically
+higher rate than the others (Chuo-ku: **+37.4 %**, Minato-ku: **+15.7 %**).
+Because the composition denominator (total population) expanded fastest through young-layer growth,
+the elderly *share* fell even though the absolute number of residents aged 65+ also increased.
+This is the defining mechanism of the "power couple / tower condominium" demographic dynamic.
+
+**Group B — Composition broadly stable**
+
+Setagaya-ku and Nakano-ku show modest positive growth across all age groups,
+with no single layer dramatically outpacing the others.
+This confirms the scatter-shift observation: gentle equilibrium rather than structural rejuvenation.
+
+**Group C — Working-age growth offsets aging, but narrowly**
+
+Hachioji-shi and Machida-shi show moderate growth in the working-age cohort
+but a small decline or near-stagnation in Under-15 population.
+Without a sustained influx of young families, the suburban aging trajectory
+is expected to reassert itself over the next decade.
+
+**Group D — Absolute population loss across all cohorts**
+
+Hinohara-mura and Oshima-machi show negative growth rates across all three age groups.
+The working-age decline is the steepest (Hinohara-mura: **−20.5 %**),
+which both reduces density and, by shrinking the denominator, mechanically raises the elderly share —
+a compounding effect that accelerates apparent aging beyond what actual elder population change implies.
+
+---
+
 ## 6. Implications
 
 ### Immediate concerns — Group D
