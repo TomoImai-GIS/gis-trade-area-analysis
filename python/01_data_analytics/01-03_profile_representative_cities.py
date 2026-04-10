@@ -133,13 +133,12 @@ WHERE cp.survey_year = 2020
 SQL_CITIES_2YR = """
 SELECT
     cp.city_code,
-    m.city_name_en,
+    cp.city_name_en,
     cp.survey_year,
     cp.population,
     ROUND(cp.density::numeric, 1)                                 AS pop_density,
     ROUND(cp.gt_65::numeric / NULLIF(cp.population, 0) * 100, 1) AS elderly_rate
 FROM  e_stat.census_population cp
-JOIN  admin_jp.municipalities_v2 m USING (city_code)
 WHERE cp.survey_year IN (2015, 2020)
   AND cp.city_code  IN %(codes)s
   AND cp.density     > 0
@@ -159,8 +158,9 @@ df_nat['log_density']    = np.log10(df_nat['pop_density'])
 df_cities['log_density'] = np.log10(df_cities['pop_density'])
 
 # Build code → English name lookup from DB  (avoids hardcoding names in config)
+# Use survey_year=2020 rows only; 2015 records have city_name_en = NULL
 code_to_name = (
-    df_cities[['city_code', 'city_name_en']]
+    df_cities[df_cities['survey_year'] == 2020][['city_code', 'city_name_en']]
     .drop_duplicates('city_code')
     .set_index('city_code')['city_name_en']
     .to_dict()
