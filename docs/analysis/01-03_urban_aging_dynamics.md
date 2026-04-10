@@ -13,7 +13,7 @@
 | D | Rural | Less dense + Older | ✅ Confirmed |
 
 Three of the four groups moved as hypothesised.
-Group B aged faster than expected — a finding that itself carries important implications
+Group B aged more slowly than expected — a finding that itself carries important implications
 (see §5).
 
 ---
@@ -57,7 +57,9 @@ moved across that space between the 2015 and 2020 censuses.
 
 ## 4. Spatial Overview
 
-> *QGIS map showing the location of the 8 municipalities — to be added.*
+![Spatial overview: 8 representative municipalities](../images/01-03_spatial_overview.png)
+
+*8 representative municipalities colour-coded by urban-type group — visualised in QGIS with OpenStreetMap base layer.*
 
 The eight municipalities span the full density spectrum of the Tokyo Metropolitan area:
 from the hyper-dense central wards (Chuo-ku: ~11,000 persons/km²)
@@ -70,10 +72,10 @@ not a subtle statistical distinction.
 | A – Urban Core | Chuo-ku | Central business/residential district; tower condominiums |
 | A – Urban Core | Minato-ku | Embassies, corporate HQs, luxury residential |
 | B – Urban Residential | Setagaya-ku | Largest ward by population; established low-rise residential |
-| B – Urban Residential | Suginami-ku | Dense mid-rise residential; commuter belt |
+| B – Urban Residential | Nakano-ku | Dense urban residential; major commuter hub and shopping district |
 | C – Suburban | Hachioji-shi | Western Tokyo suburb; university town |
 | C – Suburban | Machida-shi | Southern Tokyo suburb; commercial corridor |
-| D – Rural | Okutama-machi | Remote mountain town; depopulation already advanced |
+| D – Rural | Hinohara-mura | Tokyo's only village; mountainous, small population, high elderly rate |
 | D – Rural | Oshima-machi | Volcanic island; isolated, small population base |
 
 ---
@@ -133,14 +135,14 @@ to less expensive surrounding areas.
 
 **Group B – Urban Residential: ⚠️ Aging Slower Than Expected**
 
-Setagaya-ku and Suginami-ku remained almost exactly in place —
+Setagaya-ku and Nakano-ku remained almost exactly in place —
 density changed little and the elderly rate was essentially flat,
 or showed a marginal decline rather than the increase we predicted.
 
 This is a more optimistic outcome than hypothesised.
 A plausible explanation:
 the relatively high property values and strong residential reputation
-of inner-city suburbs like Setagaya and Suginami continue to attract
+of inner-city wards like Setagaya and Nakano continue to attract
 younger, higher-income households, enough to partially offset
 the natural aging of the existing resident base.
 Unlike the dramatic rejuvenation driven by tower-condominium development
@@ -150,7 +152,7 @@ rather than a structural shift.
 Whether this stability persists into the next decade depends on
 whether younger in-migration can be sustained as Group A central wards
 continue to absorb demand. If the competitive advantage of these
-inner suburbs weakens, the trajectory may shift toward the Group C pattern.
+inner wards weakens, the trajectory may shift toward the Group C pattern.
 
 ---
 
@@ -167,11 +169,11 @@ The demographic echo of the high-growth era is arriving on schedule.
 
 **Group D – Rural: ✅ Confirmed**
 
-Okutama-machi and Oshima-machi moved leftward and upward —
+Hinohara-mura and Oshima-machi moved leftward and upward —
 falling density and rising elderly share.
-The arrow length for Okutama-machi is particularly striking:
-because the total population is already small (~5,000),
-even a modest absolute out-migration produces a large shift in elderly share.
+The arrow length for Hinohara-mura is particularly striking:
+as Tokyo's only village, its population base is already extremely small,
+so even a modest absolute out-migration produces a large shift in elderly share.
 This amplification effect means that small rural municipalities
 can deteriorate rapidly once a threshold of depopulation is crossed.
 
