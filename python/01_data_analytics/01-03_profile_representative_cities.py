@@ -40,7 +40,9 @@ import my_access as ma
 
 # ===========================================================================
 # ★ EDIT HERE: 8 representative municipalities  (2 cities per group A–D)
-#   Verify city_code values against 01-04_cluster_assignments.csv
+#
+#   city_code only — English names are fetched automatically from the DB
+#   (admin_jp.municipalities_v2.city_name_en).
 #
 #   label_offset : (x, y) in display points from the 2020 bubble centre.
 #                  Positive x → right,  positive y → up.
@@ -57,10 +59,8 @@ GROUP_CONFIG = [
         'label': 'Urban Core',
         'color': '#e74c3c',      # coral red
         'cities': [
-            {'code': 13102, 'name': 'Chuo-ku',
-             'label_offset': ( 12, -20), 'label_ha': 'left'},   # 中央区
-            {'code': 13103, 'name': 'Minato-ku',
-             'label_offset': (-12,  12), 'label_ha': 'right'},  # 港区
+            {'code': 13102, 'label_offset': ( 12, -20), 'label_ha': 'left'},   # 中央区
+            {'code': 13103, 'label_offset': (-12,  12), 'label_ha': 'right'},  # 港区
         ],
     },
     {
@@ -68,10 +68,8 @@ GROUP_CONFIG = [
         'label': 'Urban Residential',
         'color': '#f39c12',      # amber
         'cities': [
-            {'code': 13112, 'name': 'Setagaya-ku',
-             'label_offset': (-12,  16), 'label_ha': 'right'},  # 世田谷区
-            {'code': 13114, 'name': 'Suginami-ku',
-             'label_offset': ( 12, -18), 'label_ha': 'left'},   # 杉並区
+            {'code': 13112, 'label_offset': (-12,  16), 'label_ha': 'right'},  # 世田谷区
+            {'code': 13114, 'label_offset': ( 12, -18), 'label_ha': 'left'},   # 中野区
         ],
     },
     {
@@ -79,10 +77,8 @@ GROUP_CONFIG = [
         'label': 'Suburban',
         'color': '#1abc9c',      # teal green
         'cities': [
-            {'code': 13201, 'name': 'Hachioji-shi',
-             'label_offset': (-12,  10), 'label_ha': 'right'},  # 八王子市
-            {'code': 13209, 'name': 'Machida-shi',
-             'label_offset': ( 12,  10), 'label_ha': 'left'},   # 町田市
+            {'code': 13201, 'label_offset': (-12,  10), 'label_ha': 'right'},  # 八王子市
+            {'code': 13209, 'label_offset': ( 12,  10), 'label_ha': 'left'},   # 町田市
         ],
     },
     {
@@ -90,10 +86,8 @@ GROUP_CONFIG = [
         'label': 'Rural',
         'color': '#8e44ad',      # purple
         'cities': [
-            {'code': 13307, 'name': 'Okutama-machi',
-             'label_offset': ( 10,   6), 'label_ha': 'left'},   # 奥多摩町
-            {'code': 13361, 'name': 'Oshima-machi',
-             'label_offset': ( 10,   6), 'label_ha': 'left'},   # 大島町
+            {'code': 13307, 'label_offset': ( 10,   6), 'label_ha': 'left'},   # 檜原村
+            {'code': 13361, 'label_offset': ( 10,   6), 'label_ha': 'left'},   # 大島町
         ],
     },
 ]
@@ -139,11 +133,13 @@ WHERE cp.survey_year = 2020
 SQL_CITIES_2YR = """
 SELECT
     cp.city_code,
+    m.city_name_en,
     cp.survey_year,
     cp.population,
     ROUND(cp.density::numeric, 1)                                 AS pop_density,
     ROUND(cp.gt_65::numeric / NULLIF(cp.population, 0) * 100, 1) AS elderly_rate
 FROM  e_stat.census_population cp
+JOIN  admin_jp.municipalities_v2 m USING (city_code)
 WHERE cp.survey_year IN (2015, 2020)
   AND cp.city_code  IN %(codes)s
   AND cp.density     > 0
@@ -162,9 +158,20 @@ conn.close()
 df_nat['log_density']    = np.log10(df_nat['pop_density'])
 df_cities['log_density'] = np.log10(df_cities['pop_density'])
 
+# Build code → English name lookup from DB  (avoids hardcoding names in config)
+code_to_name = (
+    df_cities[['city_code', 'city_name_en']]
+    .drop_duplicates('city_code')
+    .set_index('city_code')['city_name_en']
+    .to_dict()
+)
+
 print(f"National 2020 : {len(df_nat):,} municipalities")
 print(f"Cities loaded : {df_cities['city_code'].nunique()} cities  "
       f"({len(df_cities)} rows total)")
+print("City name lookup from DB:")
+for code, name in sorted(code_to_name.items()):
+    print(f"  {code} → {name}")
 
 # Warn about any missing city/year  (all_codes already contains 5-digit strings)
 for code in all_codes:
@@ -215,8 +222,8 @@ for grp in GROUP_CONFIG:
     color = grp['color']
 
     for city in grp['cities']:
-        code = fmt_code(city['code'])   # always 5-digit string
-        name = city['name']
+        code = fmt_code(city['code'])               # always 5-digit string
+        name = code_to_name.get(code, f'[{code}]')  # name from DB; fallback to code
 
         r15 = df_cities[(df_cities['city_code']   == code) &
                         (df_cities['survey_year'] == 2015)]
