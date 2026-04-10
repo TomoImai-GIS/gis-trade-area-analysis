@@ -8,7 +8,7 @@
 | Group | Urban Type | 2015 → 2020 Movement | Hypothesis Match |
 |---|---|---|---|
 | A | Urban Core | Denser + Younger | ✅ Confirmed |
-| B | Urban Residential | Stable density + Older (faster than expected) | ⚠️ Partially unexpected |
+| B | Urban Residential | Stable density + Elderly rate flat / slightly lower | ⚠️ Aging slower than expected |
 | C | Suburban | Stable density + Older | ✅ Confirmed |
 | D | Rural | Less dense + Older | ✅ Confirmed |
 
@@ -131,23 +131,26 @@ to less expensive surrounding areas.
 
 ---
 
-**Group B – Urban Residential: ⚠️ Aging Faster Than Expected**
+**Group B – Urban Residential: ⚠️ Aging Slower Than Expected**
 
-Setagaya-ku and Suginami-ku moved upward more steeply than anticipated —
-aging faster than predicted while density changed only marginally.
+Setagaya-ku and Suginami-ku remained almost exactly in place —
+density changed little and the elderly rate was essentially flat,
+or showed a marginal decline rather than the increase we predicted.
 
+This is a more optimistic outcome than hypothesised.
 A plausible explanation:
-younger households who might previously have settled in these inner suburbs
-are increasingly opting for the central wards (Group A territory),
-attracted by improved transport links and new condominium stock.
-At the same time, the existing long-term residents continue to age in place.
-This "squeeze from both ends" — losing young in-movers to the core
-while retaining an aging existing population — may represent
-an early-stage version of the suburbanisation-reversal dynamic.
+the relatively high property values and strong residential reputation
+of inner-city suburbs like Setagaya and Suginami continue to attract
+younger, higher-income households, enough to partially offset
+the natural aging of the existing resident base.
+Unlike the dramatic rejuvenation driven by tower-condominium development
+in Group A, the effect here is subtle — a gentle counterbalance
+rather than a structural shift.
 
-Rather than undermining the hypothesis, this unexpected finding actually
-*strengthens* the narrative: it suggests Group B is being pulled toward
-Group C faster than anticipated, compressing the window for intervention.
+Whether this stability persists into the next decade depends on
+whether younger in-migration can be sustained as Group A central wards
+continue to absorb demand. If the competitive advantage of these
+inner suburbs weakens, the trajectory may shift toward the Group C pattern.
 
 ---
 
@@ -194,14 +197,15 @@ Municipalities in this group have a narrowing window
 to restructure land use, attract younger residents, or consolidate services
 before the fiscal position becomes structurally impaired.
 
-### Emerging risk — Group B
+### Watch point — Group B
 
-The faster-than-expected aging of inner-suburban municipalities
-suggests that the "demographic buffer" between the prosperous Group A core
-and the declining Group C suburbs may be thinner than assumed.
-If Group B continues on its current trajectory,
-it will reach Group C characteristics a decade earlier than demographic projections
-based on the 2015 data would suggest.
+The current stability of inner-suburban municipalities is more resilient
+than expected, but it is not guaranteed.
+If young in-migration to Group B weakens — for example,
+as Group A central wards continue to expand condominium supply and absorb demand —
+the gentle equilibrium could tip toward the Group C pattern
+with relatively little warning.
+Group B warrants monitoring in the 2025 census data.
 
 ### Location analytics implications
 
