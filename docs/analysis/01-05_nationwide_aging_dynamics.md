@@ -205,7 +205,11 @@ provides a staging framework for policy intervention:
 |---|---|---|
 | Early | Working-age outflow; 65+ still growing fast | Largest — structural interventions still possible |
 | Mid | Both working-age and child cohorts negative; 65+ slowing | Narrowing — focus shifts to service consolidation |
-| Late | All three cohorts negative | Effectively closed — managed decline planning |
+| Late | All three cohorts negative | Severely constrained — structural reversal extremely unlikely; managed decline planning becomes the realistic goal |
+
+In practice, many Late-stage municipalities may not yet have transitioned to
+managed-decline planning, creating a gap between the urgency of the situation
+and the policy response actually in place.
 
 Overlaying this staging with fiscal capacity data
 (municipal tax revenue, social welfare expenditure)
