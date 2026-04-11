@@ -52,7 +52,7 @@ of demographic *velocity* across municipalities of all scales.
 |---|---|
 | [`python/01_data_analytics/01-05_3d_age_composition_scatter.py`](../../python/01_data_analytics/01-05_3d_age_composition_scatter.py) | Main analysis script |
 | [`output/python/01-05_3d_age_static.png`](../../output/python/01-05_3d_age_static.png) | Static 3-panel PNG (azimuth 0° / 120° / 240°, elevation 25°) |
-| [`output/python/01-05_3d_age_interactive.html`](https://htmlpreview.github.io/?https://github.com/TomoImai-GIS/gis-trade-area-analysis/blob/master/output/python/01-05_3d_age_interactive.html) | Interactive HTML: azimuth & elevation sliders + auto-rotate button |
+| [`output/python/01-05_3d_age_interactive.html`](https://tomoimai-gis.github.io/gis-trade-area-analysis/output/python/01-05_3d_age_interactive.html) | Interactive HTML: azimuth & elevation sliders + auto-rotate button |
 
 ---
 
