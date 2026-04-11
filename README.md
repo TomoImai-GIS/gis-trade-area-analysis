@@ -42,6 +42,10 @@ The national scatter plot is not static. Tracking **how municipalities moved bet
 
 → **[Urban Aging Dynamics: 2015–2020 shift analysis with hypothesis testing](docs/analysis/01-03_urban_aging_dynamics.md)**
 
+Scaling that lens to all ~1,700 municipalities nationwide and plotting the growth rate of each age cohort simultaneously in three dimensions reveals two structural findings: Under-15 and Ages 15–64 move together as a household unit, while Ages 65+ growth is largely independent and positive even in municipalities experiencing overall decline.
+
+→ **[Nationwide Aging Dynamics: 3-D age-group growth rate scatter across all municipalities](docs/analysis/01-05_nationwide_aging_dynamics.md)**
+
 ### 🚚 Delivery Area Assignment & Route Analysis
 Assign municipalities to their nearest depot; calculate route length through each prefecture or municipality from waypoints or a GPS log table. Built for **delivery network design** and **vehicle routing analysis**.
 
