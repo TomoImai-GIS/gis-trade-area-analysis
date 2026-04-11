@@ -40,11 +40,10 @@ Rank municipalities by elderly population rate with flexible region and populati
 
 The national scatter plot is not static. Tracking **how municipalities moved between 2015 and 2020** reveals four distinct demographic trajectories: urban cores are rejuvenating, inner suburbs are aging faster than expected, outer suburbs face a slow squeeze, and rural areas are entering freefall. Each trajectory carries different implications for retail siting, healthcare planning, and local fiscal sustainability.
 
-→ **[Urban Aging Dynamics: 2015–2020 shift analysis with hypothesis testing](docs/analysis/01-03_urban_aging_dynamics.md)**
+#### Further Detailed Analysis
 
-Scaling that lens to all ~1,700 municipalities nationwide and plotting the growth rate of each age cohort simultaneously in three dimensions reveals two structural findings: Under-15 and Ages 15–64 move together as a household unit, while Ages 65+ growth is largely independent and positive even in municipalities experiencing overall decline.
-
-→ **[Nationwide Aging Dynamics: 3-D age-group growth rate scatter across all municipalities](docs/analysis/01-05_nationwide_aging_dynamics.md)**
+- **[Urban Aging Dynamics: 2015–2020 shift analysis with hypothesis testing](docs/analysis/01-03_urban_aging_dynamics.md)** — Four urban-type groups tracked across the Tokyo Metropolitan Area; hypothesis-driven narrative with verification and implications for site selection and fiscal planning.
+- **[Nationwide Aging Dynamics: 3-D age-group growth rate scatter across all municipalities](docs/analysis/01-05_nationwide_aging_dynamics.md)** — All ~1,700 municipalities plotted in 3-D; reveals that Under-15 and Ages 15–64 move together as a household unit, while Ages 65+ growth is structurally independent and positive across nearly all municipalities.
 
 ### 🚚 Delivery Area Assignment & Route Analysis
 Assign municipalities to their nearest depot; calculate route length through each prefecture or municipality from waypoints or a GPS log table. Built for **delivery network design** and **vehicle routing analysis**.
