@@ -65,7 +65,7 @@ Each bubble is one municipality; size ∝ √population; colour = region.
 Axes show 2015 → 2020 growth rate within each age cohort.
 Dark reference lines mark the X / Y / Z axes through the origin; positive ends marked with arrowheads.*
 
-The interactive HTML companion allows free rotation via azimuth and elevation sliders,
+The [interactive HTML companion](https://tomoimai-gis.github.io/gis-trade-area-analysis/output/python/01-05_3d_age_interactive.html) allows free rotation via azimuth and elevation sliders,
 enabling the viewpoint-dependent findings described below to be reproduced and explored.
 
 ---
