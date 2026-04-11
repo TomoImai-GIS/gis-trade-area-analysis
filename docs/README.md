@@ -6,7 +6,7 @@ In-depth write-ups for the analyses in this repository.
 Each document follows a **Hypothesis → Verification → Implications** narrative
 and links to the Python/SQL scripts and output figures that support it.
 
-| Document | Topic | Key Scripts |
+| Document | Topic | Related |
 |---|---|---|
 | [Urban Aging Dynamics (2015–2020)](analysis/01-03_urban_aging_dynamics.md) | How population density and elderly rate shifted across four urban-type groups in Tokyo | Python `01-03`, `01-04` |
 | [Nationwide Aging Dynamics (2015–2020)](analysis/01-05_nationwide_aging_dynamics.md) | 3-D scatter of age-cohort growth rates across all ~1,700 municipalities — cohort co-movement and 65+ independence | Python `01-05` |
@@ -15,9 +15,11 @@ and links to the Python/SQL scripts and output figures that support it.
 
 ## Reference Documentation
 
-| Document | Topic |
-|---|---|
-| [Japan Census Data Design](census_jp_README.md) | PostgreSQL schema design and ingestion guide for e-Stat census data — table definitions, data sources, normalization principles, and step-by-step loading instructions for the `e_stat` and `admin_jp` schemas |
+Background documentation on data design and infrastructure that underpins the analyses above.
+
+| Document | Topic | Related |
+|---|---|---|
+| [Japan Census Data Design](census_jp_README.md) | PostgreSQL schema design and ingestion guide for e-Stat census data — table definitions, data sources, normalization principles, and step-by-step loading instructions for the `e_stat` and `admin_jp` schemas | SQL |
 
 ---
 
