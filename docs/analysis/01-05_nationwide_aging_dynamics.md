@@ -74,6 +74,10 @@ enabling the viewpoint-dependent findings described below to be reproduced and e
 
 **Viewpoint:** Looking straight down the Z+ axis (elevation ≈ 80°, any azimuth).
 
+![Finding 1 — Top-down view: Under-15 vs Ages 15–64 growth correlation](../../output/python/01-05_3d_age_composition_scatter_angle1.png)
+
+*Top-down view along the Z+ axis. The point cloud elongates diagonally from lower-left to upper-right, revealing a strong positive correlation between Under-15 and Ages 15–64 growth rates.*
+
 From this bird's-eye perspective, the cloud of municipalities collapses onto
 the X–Y plane (Under-15 vs. Ages 15–64 growth).
 The distribution is elongated along the positive diagonal,
@@ -112,6 +116,10 @@ projecting future child population from working-age migration trends
 
 **Viewpoint:** Looking from the diagonal between the X+ and Y+ axes
 (azimuth ≈ 45°, elevation ≈ 0–15°).
+
+![Finding 2 — Side view: Ages 65+ growth independence and positive bias](../../output/python/01-05_3d_age_composition_scatter_angle2.png)
+
+*Side view from the X+/Y+ diagonal. The point cloud forms a near-horizontal disk sitting above Z = 0, showing that Ages 65+ growth is largely independent of the other two cohorts and positive across nearly all municipalities.*
 
 From this angle, the Z axis (Ages 65+ growth) is directly visible
 against the combined X–Y movement.
