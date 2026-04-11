@@ -58,7 +58,7 @@ of demographic *velocity* across municipalities of all scales.
 
 ## 4. Visualisation
 
-![3-D Age-Group Growth Rate — All Municipalities](../../output/python/01-05_3d_age_composition.png)
+![3-D Age-Group Growth Rate — All Municipalities](../../output/python/01-05_3d_age_static.png)
 
 *Three fixed viewpoints at azimuth 0° / 120° / 240° (elevation 25°).
 Each bubble is one municipality; size ∝ √population; colour = region.
