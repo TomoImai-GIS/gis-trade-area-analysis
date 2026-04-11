@@ -1,10 +1,10 @@
-# Analysis Documentation
+# Documentation Index
+
+## Analysis Documentation
 
 In-depth write-ups for the analyses in this repository.
 Each document follows a **Hypothesis → Verification → Implications** narrative
 and links to the Python/SQL scripts and output figures that support it.
-
-## Contents
 
 | Document | Topic | Key Scripts |
 |---|---|---|
