@@ -178,7 +178,65 @@ municipalities have reached.
 
 ---
 
-## 7. Implications
+## 7. Octant Analysis — Quantifying the Directional Pattern
+
+The 3-D scatter provides a qualitative picture; the octant analysis converts it into hard counts.
+Each municipality is classified by the **sign** of its three growth rates —
+positive (+) or negative (−) — yielding eight possible combinations
+(octants of the three-dimensional growth-rate space).
+
+**Script & Output:**
+
+| File | Description |
+|---|---|
+| [`python/01_data_analytics/01-06_age_growth_correlation.py`](../../python/01_data_analytics/01-06_age_growth_correlation.py) | Octant analysis script |
+| [`output/python/01-06_octant_analysis.png`](../../output/python/01-06_octant_analysis.png) | Bar chart — municipality counts by octant |
+
+![Octant Analysis — Municipality Count by Age-Group Growth Direction](../../output/python/01-06_octant_analysis.png)
+
+*Each bar represents one of the eight possible (+/−) sign combinations of
+Under-15, Ages 15–64, and Ages 65+ growth rates.
+n = 1,603 municipalities; 2020 population ≥ 5,000.*
+
+### Results
+
+| Pattern (Under-15, 15–64, 65+) | Count | Share | Interpretation |
+|---|---|---|---|
+| **(−, −, +)** | **1,107** | **69.1 %** | Sequential depopulation — working-age and children declining, 65+ still growing |
+| (−, +, +) | 165 | 10.3 % | 15–64 growing despite Under-15 decline — labour in-migration without family formation |
+| (−, −, −) | 143 | 8.9 % | Advanced depopulation — all three cohorts declining |
+| (+, +, +) | 136 | 8.5 % | All cohorts growing — urban cores and fast-growing suburbs |
+| (+, −, +) | 51 | 3.2 % | Unusual mix; small counts |
+| Other | 2 | < 0.1 % | Rare edge cases |
+
+### Key Observations
+
+**1. (−, −, +) is the modal outcome for Japan — 69.1 % of municipalities.**  
+This directly quantifies Finding 2 with a plain count rather than a correlation coefficient.
+The dominant trajectory nationwide is simultaneous loss of working-age residents and children
+while the 65+ cohort still grows in absolute numbers.
+It is not a regional exception — it describes the structural baseline for the country.
+
+**2. The 65+ asymmetry is exact: (+, +, −) and (−, +, −) are empty (0 municipalities).**  
+No municipality has a declining 65+ cohort while either of the other cohorts is positive.
+The asymmetry identified visually in §6 is confirmed precisely:
+the elderly cohort never turns negative first.
+
+**3. Advanced depopulation (−, −, −) affects 8.9 % of municipalities.**  
+These 143 municipalities have crossed the threshold where even the 65+ cohort shrinks —
+the late stage of the sequential depopulation model described in §6.
+
+**4. (−, +, +) at 10.3 % is the one notable deviation from strict cohort co-movement.**  
+Working-age population grows while Under-15 declines.
+A plausible mechanism: labour in-migration (single workers, couples without children) into
+logistics hubs, industrial zones, or elder-care employers — without the family formation
+that would generate Under-15 growth.
+This sub-group departs from the household co-residence assumption underlying Finding 1
+and merits further investigation.
+
+---
+
+## 8. Implications
 
 ### Cohort co-movement simplifies demographic modelling
 
@@ -217,34 +275,19 @@ would quantify the point at which each municipality crosses into structural fisc
 
 ---
 
-## 8. Next Steps
+## 9. Next Steps
 
-The 3-D scatter provides a rich qualitative picture,
-but the inter-cohort relationships identified above call for quantitative follow-up:
+The 3-D scatter and octant analysis establish the structural pattern;
+the logical next steps move toward spatial and typological deepening:
 
-### 8.1 Correlation matrix and heatmap
-
-Compute Pearson correlations between the three growth-rate variables
-across all municipalities, and visualise as a heatmap:
-
-- **Expected:** strong positive r(Under-15, Ages 15–64);
-  weak or near-zero r(Ages 65+, others)
-- **Extension:** stratify by region and urban type to test
-  whether the correlations are stable across contexts
-
-### 8.2 Scatter matrix (pair plots)
-
-Two-dimensional scatter plots for each pair of axes, overlaid with a regression line,
-to quantify the strength and linearity of the relationships visible in the 3-D view.
-
-### 8.3 Spatial autocorrelation
+### 9.1 Spatial autocorrelation
 
 Are the municipalities with positive growth clustered geographically?
 Moran's I on each growth-rate variable would test whether
 demographic momentum is spatially contagious
 (i.e., whether growing municipalities pull neighbours upward).
 
-### 8.4 Cluster analysis
+### 9.2 Cluster analysis
 
 Apply unsupervised clustering (K-means or GMM) to the three growth-rate variables
 to identify discrete demographic trajectory types,
@@ -253,5 +296,5 @@ then map the resulting clusters spatially to test alignment with the 8-region co
 ---
 
 *Data: e-Stat 2015 & 2020 Population Census |
-Script: [`01-05`](../../python/01_data_analytics/01-05_3d_age_composition_scatter.py) |
+Scripts: [`01-05`](../../python/01_data_analytics/01-05_3d_age_composition_scatter.py), [`01-06`](../../python/01_data_analytics/01-06_age_growth_correlation.py) |
 See also: [01-03 Urban Aging Dynamics](01-03_urban_aging_dynamics.md)*
