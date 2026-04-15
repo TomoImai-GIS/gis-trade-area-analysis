@@ -245,7 +245,15 @@ def plot_panel(col, xlabel, xlo, xhi, fname, title):
                 edgecolor='white', linewidth=0.3,
                 zorder=2)
 
-    # ── KDE curves: each octant group (right axis, density) ──────────────
+    # ── KDE curves: full dataset + each octant group (right axis, density) ──
+    # Full dataset (gray) — drawn first so group curves appear on top
+    all_clipped = all_vals.clip(xlo, xhi)
+    kde_all   = gaussian_kde(all_clipped)
+    x_kde_all = np.linspace(xlo, xhi, 500)
+    ax2.plot(x_kde_all, kde_all(x_kde_all),
+             color='#888888', linewidth=2.0,
+             alpha=0.75, zorder=5)
+
     for key in sorted_keys:
         sub_vals = df.loc[df['octant'] == key, col].dropna()
         if len(sub_vals) < 5:
@@ -256,7 +264,7 @@ def plot_panel(col, xlabel, xlo, xhi, fname, title):
         y_kde = kde(x_kde)
         ax2.plot(x_kde, y_kde,
                  color=GROUPS[key]['color'], linewidth=2.0,
-                 alpha=0.90, zorder=5)
+                 alpha=0.90, zorder=6)
 
     # ── Group mean lines (dashed, per group colour) ───────────────────────
     # zorder=4: above histograms but below stats box (zorder=10)
