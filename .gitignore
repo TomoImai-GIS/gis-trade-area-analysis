@@ -20,5 +20,8 @@ __pycache__/
 venv/
 .venv/
 
+# Exploratory / internal scripts (not for public release)
+temp_*.py
+
 # Logs
 *.log

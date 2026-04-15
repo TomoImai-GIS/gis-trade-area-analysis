@@ -128,7 +128,7 @@ OCTANT_COLORS = {
     '--+': '#e87700',   # Sequential depopulation early/mid — amber
     '+++': '#1f77b4',   # All growing — blue
     '-++': '#aec7e8',
-    '+-+': '#ffbb78',
+    '+-+': '#9467bd',
     '---': '#d62728',   # Advanced depopulation — red
     '++-': '#98df8a',
     '+--': '#ff9896',
