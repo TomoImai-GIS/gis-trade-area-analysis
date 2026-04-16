@@ -56,9 +56,11 @@ Each panel shares the following design:
 
 The (−, −, +) amber curve closely tracks the full-dataset gray curve, reflecting
 its 69.1 % share of all municipalities.
-The (+, +, +) blue group is the only one clearly separated to the right,
-confirming that genuine child-population growth is concentrated in
-urban-core and fast-growing suburban municipalities.
+Among the five groups, (+, +, +) blue stands out with its distribution centred
+in clearly positive territory and an extended right tail — reflecting both higher
+average Under-15 growth and greater variability across urban cores and fast-growing
+suburbs. Note that the (+, −, +) purple group also appears in positive territory,
+but clusters tightly just above zero; see Observation 4.
 
 ---
 
