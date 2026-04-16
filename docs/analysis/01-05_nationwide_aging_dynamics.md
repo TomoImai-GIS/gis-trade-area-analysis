@@ -234,6 +234,10 @@ that would generate Under-15 growth.
 This sub-group departs from the household co-residence assumption underlying Finding 1
 and merits further investigation.
 
+→ *For detailed growth rate histograms by octant group, including key observations on
+distribution shape and spread:
+[01-07 Octant Group Growth Rate Distributions](01-07_octant_histogram_analysis.md)*
+
 ---
 
 ## 8. Implications

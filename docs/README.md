@@ -10,6 +10,7 @@ and links to the Python/SQL scripts and output figures that support it.
 |---|---|---|
 | [Urban Aging Dynamics (2015–2020)](analysis/01-03_urban_aging_dynamics.md) | How population density and elderly rate shifted across four urban-type groups in Tokyo | Python `01-03`, `01-04` |
 | [Nationwide Aging Dynamics (2015–2020)](analysis/01-05_nationwide_aging_dynamics.md) | 3-D scatter of age-cohort growth rates across all ~1,700 municipalities — cohort co-movement and 65+ independence | Python `01-05` |
+| [Octant Group Growth Rate Distributions (2015–2020)](analysis/01-07_octant_histogram_analysis.md) | Histogram deep-dive into five major demographic trajectory types — distribution shape, spread, and key observations by octant group | Python `01-06`, `01-07` |
 
 ---
 
