@@ -24,16 +24,27 @@ Python tools for GIS data processing, spatial analysis, and visualization. Compl
 Statistical analysis and non-spatial visualization using pandas, numpy, and matplotlib.
 Reads data from PostgreSQL via psycopg2. Credentials loaded from `AccessKeys/my_access.py`.
 
-| File | Purpose | Output |
-|------|---------|--------|
-| [01-01_scatter_density_vs_elderly_rate.py](01_data_analytics/01-01_scatter_density_vs_elderly_rate.py) | Bubble scatter: population density vs elderly rate, colored by region, outlier-labeled | [PNG](../output/python/01-01_scatter_density_vs_elderly_rate.png) |
-| [01-02_scatter_density_vs_elderly_rate_by_region.py](01_data_analytics/01-02_scatter_density_vs_elderly_rate_by_region.py) | 8-panel version of 01-01: one subplot per region, regional vs national OLS trend comparison | [PNG](../output/python/01-02_scatter_density_vs_elderly_rate_by_region.png) |
+| File | Purpose | Output | Analysis |
+|------|---------|--------|----------|
+| [01-01_scatter_density_vs_elderly_rate.py](01_data_analytics/01-01_scatter_density_vs_elderly_rate.py) | Bubble scatter: population density vs elderly rate, colored by region, outlier-labeled | [PNG](../output/python/01-01_scatter_density_vs_elderly_rate.png) | — |
+| [01-02_scatter_density_vs_elderly_rate_by_region.py](01_data_analytics/01-02_scatter_density_vs_elderly_rate_by_region.py) | 8-panel version of 01-01: one subplot per region, regional vs national OLS trend comparison | [PNG](../output/python/01-02_scatter_density_vs_elderly_rate_by_region.png) | — |
+| [01-03_profile_representative_cities.py](01_data_analytics/01-03_profile_representative_cities.py) | Shift-arrow scatter for 8 representative municipalities across 4 urban-type groups — population density × elderly rate, 2015 → 2020 | [PNG](../output/python/01-03_scatter_shift.png) | [Urban Aging Dynamics](../docs/analysis/01-03_urban_aging_dynamics.md) |
+| [01-04_cluster_municipalities_by_density_aging.py](01_data_analytics/01-04_cluster_municipalities_by_density_aging.py) | GMM clustering of ~1,900 municipalities into 6 urban-type groups by density and elderly rate; K-means comparison; BIC model selection | [PNG](../output/python/01-04_cluster_municipalities_by_density_aging.png), CSV | [Urban Aging Dynamics](../docs/analysis/01-03_urban_aging_dynamics.md) |
+| [01-05_3d_age_composition_scatter.py](01_data_analytics/01-05_3d_age_composition_scatter.py) | 3-D scatter of age-cohort growth rates (Under-15 / Ages 15–64 / Ages 65+) for all ~1,700 municipalities; static 3-panel PNG and interactive HTML | [PNG](../output/python/01-05_3d_age_static.png), [HTML](../output/python/01-05_3d_age_interactive.html), angle PNGs | [Nationwide Aging Dynamics](../docs/analysis/01-05_nationwide_aging_dynamics.md) |
+| [01-06_age_growth_correlation.py](01_data_analytics/01-06_age_growth_correlation.py) | Octant classification by sign of three age-group growth rates; bar chart of municipality counts by demographic trajectory type | [PNG](../output/python/01-06_octant_analysis.png) | [Nationwide Aging Dynamics §7](../docs/analysis/01-05_nationwide_aging_dynamics.md#7-octant-analysis--quantifying-the-directional-pattern) |
+| [01-07_octant_growth_distributions.py](01_data_analytics/01-07_octant_growth_distributions.py) | Growth rate histograms for 5 major octant groups vs full dataset; dual Y-axis (count + KDE); 4 separate panels by age group | 4 × [PNG](../output/python/) | [Octant Group Growth Rate Distributions](../docs/analysis/01-07_octant_histogram_analysis.md) |
 
 ![Population density vs elderly rate](../output/python/01-01_scatter_density_vs_elderly_rate.png)
 *Population density vs elderly rate by municipality (2020 Census) — bubble size = population, color = region, dashed line = OLS trend*
 
 ![Population density vs elderly rate by region](../output/python/01-02_scatter_density_vs_elderly_rate_by_region.png)
 *8-panel view by region — dark dashed = regional trend, gray dashed = national trend (reference)*
+
+![3-D age-group growth rate scatter](../output/python/01-05_3d_age_static.png)
+*3-D scatter of 2015→2020 growth rates for Under-15 / Ages 15–64 / Ages 65+ across ~1,700 municipalities — three fixed viewpoints at azimuth 0° / 120° / 240°*
+
+![Octant analysis — municipality count by trajectory type](../output/python/01-06_octant_analysis.png)
+*Municipality counts by age-group growth direction (octant) — n = 1,603 municipalities (2020 population ≥ 5,000)*
 
 ---
 
