@@ -68,11 +68,15 @@ but clusters tightly just above zero; see Observation 4.
 
 ![Ages 15–64 Growth Rate by Octant Group](../../output/python/01-07_octant_distributions_15-64.png)
 
-The (−, +, +) light-blue group is the **only group whose KDE curve peaks
-in positive territory**, directly distinguishing it from all other groups.
-This separation is the clearest visual confirmation that labour in-migration
-without family formation operates through a different mechanism from
-standard household co-migration.
+Three of the five groups — (−, −, +), (−, −, −), and (+, −, +) — cluster
+in negative territory, consistent with their octant definitions.
+Both (−, +, +) light-blue and (+, +, +) blue peak in positive territory;
+(+, +, +) sits further right, reflecting stronger all-round growth in urban cores.
+The analytically significant feature of (−, +, +) emerges from cross-panel
+comparison: it is the one group that achieves positive Ages 15–64 growth
+while Under-15 simultaneously declines — the clearest visual confirmation
+that labour in-migration without family formation operates through a different
+mechanism from standard household co-migration.
 
 ---
 
