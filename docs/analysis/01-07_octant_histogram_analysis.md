@@ -30,6 +30,25 @@ below which histogram shape becomes statistically unstable:
 | (+, +, +) | 136 | 8.5 % | All cohorts growing — urban cores and fast-growing suburbs |
 | (+, −, +) | 51 | 3.2 % | Under-15 marginally growing, Ages 15–64 declining |
 
+### Geographic Distribution — QGIS Choropleth
+
+The maps below show where each trajectory type is spatially concentrated.
+The (−, −, +) group is hidden in both views — it accounts for 69.1 % of all
+municipalities and would otherwise dominate the visual field.
+Colours match the histogram panels in §2.
+
+![Octant Growth Choropleth — Nationwide](../../output/sql/03-03_generate_choropleth_octant_growth_wide.png)
+
+*Nationwide overview — blank areas represent (−, −, +) municipalities (69.1 % of total).
+Generated with [`sql/03_visualization/03-03_generate_choropleth_octant_growth.sql`](../../sql/03_visualization/03-03_generate_choropleth_octant_growth.sql) + QGIS.*
+
+![Octant Growth Choropleth — Kanto / Tokai detail](../../output/sql/03-03_generate_choropleth_octant_growth_zoomed.png)
+
+*(+, +, +) blue concentrates in metropolitan cores (Tokyo, Nagoya, Osaka corridors);
+(−, +, +) light-blue in surrounding suburbs; (−, −, −) red in mountainous interiors.
+Blank areas represent (−, −, +) municipalities (69.1 % of total) —
+[view with (−, −, +) displayed](../../output/sql/03-03_generate_choropleth_octant_growth_zoomed_2.png).*
+
 ---
 
 ## 2. Histograms — Growth Rate Distribution by Octant Group
