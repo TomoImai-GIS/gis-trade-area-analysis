@@ -58,13 +58,13 @@ Geocode customer records to municipality level, calculate penetration rates agai
 
 ## SQL Templates
 
-**15 production-ready templates** across 3 categories. All follow the same pattern — edit the params block, run the file.
+**13 production-ready templates** across 3 categories. All follow the same pattern — edit the params block, run the file.
 
 | Category | Count | Description |
 |----------|-------|-------------|
 | [`sql/01_basic/`](sql/01_basic/) | 3 | Reverse geocoding, prefecture lookup, straight-line distance |
 | [`sql/02_analysis/`](sql/02_analysis/) | 8 | Trade area population, customer aggregation, delivery assignment, route analysis, demographic ranking |
-| [`sql/03_visualization/`](sql/03_visualization/) | 1 | Municipality polygon output with demographic breakdown for QGIS choropleth (elderly rate, population density, and more) |
+| [`sql/03_visualization/`](sql/03_visualization/) | 2 | Municipality polygon output for QGIS choropleth — elderly rate / population density; octant growth trajectory by municipality |
 
 → **[Full template index with code examples and output descriptions](sql/README.md)**
 
@@ -132,11 +132,11 @@ psql -d your_database -f sql/02_analysis/02-01_calc_trade_area_population.sql
 
 ```
 gis-trade-area-analysis/
-├── sql/                      # SQL templates (15 production-ready)
+├── sql/                      # SQL templates (13 production-ready)
 │   ├── README.md             # Full template index with code examples
 │   ├── 01_basic/             # Foundational spatial operations (3 templates)
 │   ├── 02_analysis/          # Core spatial analysis (8 templates)
-│   └── 03_visualization/     # QGIS / map output queries (1 template)
+│   └── 03_visualization/     # QGIS / map output queries (2 templates)
 ├── python/                   # Python tools
 │   ├── README.md             # Full tool index and usage examples
 │   ├── 00_notebooks/         # Jupyter Notebook showcase
