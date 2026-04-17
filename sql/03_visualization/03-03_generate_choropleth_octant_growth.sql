@@ -1,7 +1,7 @@
 -- ============================================
 -- [METADATA]
--- file: 02-07_generate_octant_map_municipalities.sql
--- category: analysis
+-- file: 03-03_generate_choropleth_octant_growth.sql
+-- category: visualization
 -- tags: #octant #aging #demographics #qgis #choropleth #population-growth
 -- difficulty: ★☆☆ (beginner)
 -- execution_time: ~1s
