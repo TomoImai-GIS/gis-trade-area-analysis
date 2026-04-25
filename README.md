@@ -7,6 +7,8 @@
 ![QGIS](https://img.shields.io/badge/QGIS-3.x-589632?logo=qgis&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)
 
+> 🇺🇸 Looking for the US market version? See [GIS Trade Area Analysis — US](https://github.com/TomoImai-GIS/gis-trade-area-analysis-us)
+
 ---
 
 ## Overview
