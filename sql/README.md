@@ -35,7 +35,7 @@ Production-ready PostGIS SQL templates for spatial analysis and location intelli
 |------|---------|---------------|
 | [03-02_generate_choropleth_elderly_rate.sql](03_visualization/03-02_generate_choropleth_elderly_rate.sql) | Municipality polygons with demographic breakdown for QGIS choropleth — covers elderly rate, population density, and more | GeoJSON / PostGIS layer |
 | [03-03_generate_choropleth_octant_growth.sql](03_visualization/03-03_generate_choropleth_octant_growth.sql) | Municipality polygons classified by 2015→2020 age-group growth direction (octant) for QGIS choropleth — includes population counts, deltas, and 3-char octant key | GeoJSON / PostGIS layer |
-| 03-04_export_route_for_map.sql | Route geometry for map export | 🚧 in progress |
+| [03-04_visualize_cities_along_route_from_gps_log.sql](03_visualization/03-04_visualize_cities_along_route_from_gps_log.sql) | Municipalities a GPS route passes through, returned as polygons (with city_code unique id) for QGIS — visualisation counterpart of 02-05c | GeoJSON / PostGIS layer |
 | 03-05_generate_heatmap_density.sql | Point density data for heatmap | 🚧 in progress |
 
 ### 06_advanced/ — Advanced spatial analysis
