@@ -134,7 +134,7 @@ psql -d your_database -f sql/02_analysis/02-01_calc_trade_area_population.sql
 
 ```
 gis-trade-area-analysis/
-├── sql/                      # SQL templates (13 production-ready)
+├── sql/                      # SQL templates (14 production-ready)
 │   ├── README.md             # Full template index with code examples
 │   ├── 01_basic/             # Foundational spatial operations (3 templates)
 │   ├── 02_analysis/          # Core spatial analysis (8 templates)
