@@ -21,11 +21,12 @@ Prerequisites:
     1. A saved QGIS PostgreSQL connection to the gps_log database
        (default name: "GPS_log"). host/port/password are read from this saved
        connection, so no credentials are stored in this file.
-    2. The municipality polygons + names, reachable in the gps_log database as
-       MUNI_TABLE. postgres_fdw makes `public.v_census_municipality` available, but
-       querying that FDW view directly is slow (~70-90 s per route) because the
-       remote re-runs its census joins every call. For large routes, build a LOCAL
-       materialized copy once and set MUNI_TABLE = "cache.census_municipality":
+    2. The municipality polygons + names. postgres_fdw makes
+       `public.v_census_municipality` available, but querying that FDW view directly
+       is slow (~70-90 s per route) because the remote re-runs its census joins every
+       call. The script prefers a LOCAL materialized copy and falls back to the FDW
+       view automatically (see MUNI_TABLE_PREFERRED / MUNI_TABLE_FALLBACK). Build the
+       local copy once for fast (~1 s) renders:
 
            CREATE SCHEMA IF NOT EXISTS cache;
            CREATE MATERIALIZED VIEW cache.census_municipality AS
@@ -37,10 +38,13 @@ Prerequisites:
            -- REFRESH MATERIALIZED VIEW cache.census_municipality;
 
 Usage (in the QGIS Python console):
-    1. Edit the [PARAMETERS] block below (RECORD_ID, CONNECTION_NAME).
+    1. Set CONNECTION_NAME and styling defaults in [PARAMETERS] once (the municipality
+       source is auto-resolved: local matview if present, else the FDW view).
     2. Run this file:  Plugins > Python Console > "Show Editor" > Run Script,
        or  exec(open(r"...\\02-01_render_route_and_cities_along_route.py").read())
-    3. To draw another record without re-running the whole file:  render(229)
+       Two small dialogs ask for the record_id and label language (en/jp) each run,
+       so you can redraw different records without editing and saving the file.
+    3. To draw a specific record directly (no prompt):  render(229, lang="jp")
 
 Notes:
     - The query layer uses `city_code` as its unique id (an FDW view has no ctid,
@@ -71,22 +75,24 @@ from qgis.core import (
     QgsCoordinateTransform,
 )
 from qgis.PyQt.QtGui import QColor, QFont
+from qgis.PyQt.QtWidgets import QInputDialog
 from qgis.utils import iface
 
 # ============================================================
 # [PARAMETERS] Edit this block only
 # ============================================================
 
-RECORD_ID       = 228          # gps_log.record_id to visualise
+RECORD_ID       = 228          # default record_id offered at the run-time prompt (Enter accepts it)
 CONNECTION_NAME = "GPS_log"    # saved QGIS PostgreSQL connection (gps_log database)
 GPS_LOG_SCHEMA  = "personal"   # schema holding the gps_log table (not on the search_path)
 
-# Source of the municipality polygons + names (schema-qualified). The default FDW
-# view works out of the box once postgres_fdw is set up. For large routes it is slow
-# (~70-90 s/route) because the remote re-runs its heavy census joins on every call;
-# build a LOCAL materialized copy once (see the module docstring) and set this to
-# "cache.census_municipality" for ~1 s renders.
-MUNI_TABLE      = "public.v_census_municipality"  # or a local matview, e.g. "cache.census_municipality" (fast)
+# Source of the municipality polygons + names (schema-qualified), resolved at run
+# time: the script prefers the fast local matview and automatically falls back to the
+# FDW view when the matview is absent. So it runs fast where the local cache exists
+# (see the module docstring for how to build it) and still works out of the box on a
+# plain postgres_fdw setup (slower on large routes, ~70-90 s/route).
+MUNI_TABLE_PREFERRED = "cache.census_municipality"     # local materialized copy (fast)
+MUNI_TABLE_FALLBACK  = "public.v_census_municipality"  # FDW view (works everywhere, slow)
 
 # --- Cities along Route: fill (values captured from the reference project) ---
 CITY_FILL_COLOR       = "#0318ff"  # blue  (RGB 3, 24, 255); also used for the outline
@@ -95,8 +101,9 @@ CITY_OUTLINE_OPACITY  = 0.40       # outline: same RGB as the fill, its own opac
 CITY_OUTLINE_WIDTH_MM = 0.2        # thin boundary line
 
 # --- Cities along Route: labels ---
-# Pick the language once; the label column, font, and layer names all follow it.
-CITY_LABEL_LANG      = "en"         # "en" = English, "jp" = Japanese
+# Default label language offered at the run-time prompt; drives the label column,
+# font, and layer names together. "en" = English, "jp" = Japanese.
+CITY_LABEL_LANG      = "en"
 CITY_LABEL_SIZE_PT   = 10           # points
 CITY_LABEL_COLOR     = "#0318ff"
 LABEL_BUFFER_SIZE_MM = 1.0          # white halo for legibility; set 0 to disable
@@ -123,11 +130,12 @@ BASEMAP_NAME         = "OpenStreetMap"   # kept as-is in both languages
 # ============================================================
 
 
-def _cities_sql(record_id):
+def _cities_sql(record_id, muni_table):
     """Municipalities the route passes through, with polygon geometry for QGIS.
 
     Mirrors the main query of 03-04; record_id is inlined and the [NOTES]/params
-    CTE are dropped so the statement works as a query-layer subquery.
+    CTE are dropped so the statement works as a query-layer subquery. muni_table is
+    the resolved municipality source (local matview or FDW view).
     """
     return f"""
         SELECT
@@ -151,7 +159,7 @@ def _cities_sql(record_id):
                 ) / 1000)::numeric, 2
             ) AS distance_from_start_km,
             m.geom
-        FROM {MUNI_TABLE} m
+        FROM {muni_table} m
         CROSS JOIN {GPS_LOG_SCHEMA}.gps_log g
         WHERE g.record_id = {int(record_id)}
           AND ST_Intersects(m.geom, g.geom)
@@ -167,8 +175,8 @@ def _route_sql(record_id):
     """
 
 
-def _base_uri(connection_name):
-    """Build a QgsDataSourceUri from a saved QGIS PostgreSQL connection by name."""
+def _connection(connection_name):
+    """Return the saved QGIS PostgreSQL connection (provider connection) by name."""
     md = QgsProviderRegistry.instance().providerMetadata("postgres")
     conn = md.findConnection(connection_name)
     if conn is None:
@@ -177,7 +185,29 @@ def _base_uri(connection_name):
             "Create it in the QGIS Browser (PostgreSQL > New Connection), or set "
             "CONNECTION_NAME to an existing connection that points at the gps_log DB."
         )
-    return QgsDataSourceUri(conn.uri())
+    return conn
+
+
+def _resolve_muni_table(conn):
+    """Pick the municipality source: the fast local matview if present, else the FDW view.
+
+    Uses to_regclass(), which returns NULL for a missing/invisible relation without
+    raising, so the preferred local cache is used automatically when it exists and the
+    FDW view is used everywhere else.
+    """
+    for table in (MUNI_TABLE_PREFERRED, MUNI_TABLE_FALLBACK):
+        try:
+            result = conn.executeSql(f"SELECT to_regclass('{table}')")
+        except Exception:
+            continue
+        if result and result[0] and result[0][0]:
+            return table
+    raise RuntimeError(
+        "No municipality source is reachable. Checked:\n"
+        f"  preferred (local matview): {MUNI_TABLE_PREFERRED}\n"
+        f"  fallback  (FDW view)     : {MUNI_TABLE_FALLBACK}\n"
+        "Configure postgres_fdw and/or build the local matview (see the docstring)."
+    )
 
 
 def _query_layer(base_uri, sql, geom_col, key_col, name, record_id):
@@ -201,15 +231,15 @@ def _rgba(hex_color, opacity):
     return f"{color.red()},{color.green()},{color.blue()},{int(round(opacity * 255))}"
 
 
-def _lang():
+def _valid_lang(lang):
     """Validated language key; falls back to 'en' for any unexpected value."""
-    return CITY_LABEL_LANG if CITY_LABEL_LANG in CITY_LABEL_FIELDS else "en"
+    return lang if lang in CITY_LABEL_FIELDS else "en"
 
 
-def _style_cities(layer):
+def _style_cities(layer, lang):
     """Blue fill + a thin same-RGB, less-transparent outline + labels.
 
-    The label column and font both follow the selected language (_lang()).
+    The label column and font both follow the given language ("en"/"jp").
     Transparency is set per colour alpha (not symbol opacity) so the outline can be
     more opaque than the 30 % fill.
     """
@@ -221,7 +251,6 @@ def _style_cities(layer):
     })
     layer.renderer().setSymbol(symbol)
 
-    lang = _lang()
     label = QgsPalLayerSettings()
     label.fieldName = CITY_LABEL_FIELDS[lang]
 
@@ -258,11 +287,11 @@ def _basemap():
     return QgsRasterLayer(url, BASEMAP_NAME, "wms")
 
 
-def render(record_id=RECORD_ID, connection_name=CONNECTION_NAME):
+def render(record_id=RECORD_ID, connection_name=CONNECTION_NAME, lang=CITY_LABEL_LANG):
     """Build, style, and add the three layers for one gps_log record."""
     project = QgsProject.instance()
 
-    lang = _lang()
+    lang = _valid_lang(lang)
     cities_name = CITIES_LAYER_NAMES[lang]
     route_name  = ROUTE_LAYER_NAMES[lang]
 
@@ -276,14 +305,16 @@ def render(record_id=RECORD_ID, connection_name=CONNECTION_NAME):
             for existing in project.mapLayersByName(name):
                 project.removeMapLayer(existing.id())
 
-    base_uri = _base_uri(connection_name)
+    conn = _connection(connection_name)
+    base_uri = QgsDataSourceUri(conn.uri())
+    muni_table = _resolve_muni_table(conn)
 
-    cities = _query_layer(base_uri, _cities_sql(record_id),
+    cities = _query_layer(base_uri, _cities_sql(record_id, muni_table),
                           "geom", "city_code", cities_name, record_id)
     route  = _query_layer(base_uri, _route_sql(record_id),
                           "geom", "record_id", route_name, record_id)
 
-    _style_cities(cities)
+    _style_cities(cities, lang)
     _style_route(route)
 
     # Add bottom-to-top; addMapLayer() inserts at the top of the layer tree, so the
@@ -307,10 +338,51 @@ def render(record_id=RECORD_ID, connection_name=CONNECTION_NAME):
         canvas.setExtent(extent)
         canvas.refresh()
 
-    print(f"record_id={record_id}: {cities.featureCount()} municipalities, "
-          "route and basemap loaded.")
+    print(f"record_id={record_id}: {cities.featureCount()} municipalities "
+          f"(source: {muni_table}), route and basemap loaded.")
+    if muni_table == MUNI_TABLE_FALLBACK:
+        print(f"  Note: using the FDW view (slow on large routes). Build the local "
+              f"matview {MUNI_TABLE_PREFERRED} for ~1 s renders (see the docstring).")
     return cities, route
 
 
-# Auto-run with the parameters above when executed from the QGIS console.
-render()
+def _ask_record_id(parent, default):
+    """Modal dialog for the gps_log record_id. Returns None if cancelled."""
+    value, ok = QInputDialog.getInt(
+        parent, "Render route", "gps_log record_id:", default, 0)
+    return value if ok else None
+
+
+def _ask_lang(parent, default):
+    """Modal dialog for the label language ('en'/'jp'). Returns None if cancelled."""
+    items = list(CITY_LABEL_FIELDS.keys())          # ["en", "jp"]
+    current = items.index(default) if default in items else 0
+    text, ok = QInputDialog.getItem(
+        parent, "Render route", "Label language:", items, current, False)
+    return text if ok else None
+
+
+def prompt_parameters():
+    """Ask for the record_id and label language via modal dialogs.
+
+    input() is not usable here: under "Run Script" the QGIS console has no stdin
+    ("lost sys.stdin"), so Qt dialogs are used instead. Returns (None, None) if
+    either dialog is cancelled.
+    """
+    parent = iface.mainWindow() if iface is not None else None
+    record_id = _ask_record_id(parent, RECORD_ID)
+    if record_id is None:
+        return None, None
+    lang = _ask_lang(parent, _valid_lang(CITY_LABEL_LANG))
+    if lang is None:
+        return None, None
+    return record_id, lang
+
+
+# Auto-run: ask for the record_id and language (modal dialogs), then render. This
+# lets you change them at run time without editing and saving the file.
+_record_id, _label_lang = prompt_parameters()
+if _record_id is not None:
+    render(_record_id, lang=_label_lang)
+else:
+    print("Cancelled - no layers rendered.")
