@@ -48,6 +48,23 @@ Reads data from PostgreSQL via psycopg2. Credentials loaded from `AccessKeys/my_
 
 ---
 
+## 02_QGIS_automation — Scripts
+
+Multi-layer map automation for the **QGIS Python console** (PyQGIS + `iface`).
+These scripts are not standalone — run them from *Plugins > Python Console*.
+Database access uses a saved QGIS PostgreSQL connection by name, so no credentials
+are stored in the files.
+
+| File | Purpose | Layers produced | Companion SQL |
+|------|---------|-----------------|---------------|
+| [02-01_render_route_and_cities_along_route.py](02_QGIS_automation/02-01_render_route_and_cities_along_route.py) | Given a `gps_log.record_id`, draw and style the GPS route plus the municipalities it passes through | Cities along Route (polygons) · Route (line) · OpenStreetMap (basemap) | [03-04](../sql/03_visualization/03-04_visualize_cities_along_route_from_gps_log.sql) |
+
+> **Prerequisites for 02-01:** a saved QGIS PostgreSQL connection to the gps_log
+> database (default name `GPS_log`), and `postgres_fdw` configured so that
+> `public.v_census_municipality` is reachable as a foreign table.
+
+---
+
 ## 99_snippets/gis_utils — Utility Library
 
 An importable Python package for common GIS coordinate operations in Japan.
