@@ -42,8 +42,9 @@ Usage (in the QGIS Python console):
        source is auto-resolved: local matview if present, else the FDW view).
     2. Run this file:  Plugins > Python Console > "Show Editor" > Run Script,
        or  exec(open(r"...\\02-01_render_route_and_cities_along_route.py").read())
-       Two small dialogs ask for the record_id and label language (en/jp) each run,
-       so you can redraw different records without editing and saving the file.
+       Small dialogs ask for the record_id, label language (en/jp), and whether to
+       include census attributes each run, so you can redraw different records
+       without editing and saving the file.
     3. To draw a specific record directly (no prompt):  render(229, lang="jp")
 
 Notes:
@@ -54,6 +55,10 @@ Notes:
       higher opacity, so municipal boundaries read clearly over the busy basemap.
     - A light white label buffer is added for legibility over the busy basemap;
       set LABEL_BUFFER_SIZE_MM = 0 to disable it.
+    - Answer "yes" to the census prompt (or set INCLUDE_CENSUS = True) to carry every
+      municipality column on the Cities layer, so clicking a polygon shows the full
+      census profile (population, elderly rate, density, industry, ...) in Identify.
+      Fast on the local matview; slow if it falls back to the FDW view.
     - Set CITY_LABEL_LANG = "en" or "jp". This one switch drives the label column
       (CITY_LABEL_FIELDS), the label font (CITY_LABEL_FONTS), and the layer names
       (CITIES_LAYER_NAMES / ROUTE_LAYER_NAMES) together. Adjust CITY_LABEL_FONTS if a
@@ -119,6 +124,7 @@ ROUTE_WIDTH_MM       = 0.66
 # --- Behaviour ---
 REPLACE_EXISTING     = True        # remove same-named layers first (re-runnable)
 ADD_BASEMAP          = True        # add an OpenStreetMap XYZ basemap at the bottom
+INCLUDE_CENSUS       = False       # default for the prompt: carry full census attributes on the Cities layer
 
 # --- Layer names (also follow CITY_LABEL_LANG) ---
 CITIES_LAYER_NAMES   = {"en": "Cities along Route", "jp": "ルート沿い市区町村"}
@@ -130,35 +136,44 @@ BASEMAP_NAME         = "OpenStreetMap"   # kept as-is in both languages
 # ============================================================
 
 
-def _cities_sql(record_id, muni_table):
+# Identity columns shown in both modes; they always lead the attribute order.
+# (area_km2 is emitted rounded; the rest are plain m.<col> references.)
+_BASE_COLUMNS = ("city_code", "full_name", "pref_name", "city_name",
+                 "city_name_en", "region", "area_km2")
+
+
+def _cities_sql(record_id, muni_table, include_census, census_columns=None):
     """Municipalities the route passes through, with polygon geometry for QGIS.
 
-    Mirrors the main query of 03-04; record_id is inlined and the [NOTES]/params
-    CTE are dropped so the statement works as a query-layer subquery. muni_table is
-    the resolved municipality source (local matview or FDW view).
+    Mirrors the main query of 03-04; record_id is inlined and the [NOTES]/params CTE
+    are dropped so the statement works as a query-layer subquery. muni_table is the
+    resolved municipality source (local matview or FDW view).
+
+    Column order is always: the base identity columns (_BASE_COLUMNS) + route metrics
+    first, then (when include_census) the remaining census columns, then geom. So the
+    familiar fields lead the Identify panel and the demographics follow.
+    census_columns is the ordered list of extra columns to append (base/geom removed).
     """
+    base_select = [
+        "ROUND(m.area_km2::numeric, 2) AS area_km2" if col == "area_km2" else f"m.{col}"
+        for col in _BASE_COLUMNS
+    ]
+    # Per-municipality route metrics (computed on the matched rows).
+    route_metrics = [
+        "ROUND((ST_Length(ST_Intersection(m.geom, g.geom)::geography) / 1000)::numeric, 2)"
+        " AS route_length_in_city_km",
+        "ROUND((ST_Length(ST_LineSubstring(g.geom, 0,"
+        " ST_LineLocatePoint(g.geom, ST_ClosestPoint(m.geom, ST_StartPoint(g.geom)))"
+        ")::geography) / 1000)::numeric, 2) AS distance_from_start_km",
+    ]
+    columns = base_select + route_metrics
+    if include_census:
+        columns += [f"m.{col}" for col in (census_columns or [])]
+    columns += ["m.geom"]
+    select_list = ",\n            ".join(columns)
     return f"""
         SELECT
-            m.city_code,
-            m.full_name,
-            m.pref_name,
-            m.city_name,
-            m.city_name_en,
-            m.region,
-            ROUND(m.area_km2::numeric, 2) AS area_km2,
-            ROUND(
-                (ST_Length(ST_Intersection(m.geom, g.geom)::geography) / 1000)::numeric, 2
-            ) AS route_length_in_city_km,
-            ROUND(
-                (ST_Length(
-                    ST_LineSubstring(
-                        g.geom, 0,
-                        ST_LineLocatePoint(g.geom,
-                            ST_ClosestPoint(m.geom, ST_StartPoint(g.geom)))
-                    )::geography
-                ) / 1000)::numeric, 2
-            ) AS distance_from_start_km,
-            m.geom
+            {select_list}
         FROM {muni_table} m
         CROSS JOIN {GPS_LOG_SCHEMA}.gps_log g
         WHERE g.record_id = {int(record_id)}
@@ -208,6 +223,19 @@ def _resolve_muni_table(conn):
         f"  fallback  (FDW view)     : {MUNI_TABLE_FALLBACK}\n"
         "Configure postgres_fdw and/or build the local matview (see the docstring)."
     )
+
+
+def _muni_columns(conn, muni_table):
+    """Ordered column names of muni_table (pg_attribute → works for matviews/views/FDW)."""
+    schema, _, table = muni_table.partition(".")
+    rows = conn.executeSql(
+        "SELECT a.attname FROM pg_attribute a "
+        "JOIN pg_class c ON c.oid = a.attrelid "
+        "JOIN pg_namespace n ON n.oid = c.relnamespace "
+        f"WHERE n.nspname = '{schema}' AND c.relname = '{table}' "
+        "AND a.attnum > 0 AND NOT a.attisdropped ORDER BY a.attnum"
+    )
+    return [row[0] for row in rows]
 
 
 def _query_layer(base_uri, sql, geom_col, key_col, name, record_id):
@@ -287,7 +315,8 @@ def _basemap():
     return QgsRasterLayer(url, BASEMAP_NAME, "wms")
 
 
-def render(record_id=RECORD_ID, connection_name=CONNECTION_NAME, lang=CITY_LABEL_LANG):
+def render(record_id=RECORD_ID, connection_name=CONNECTION_NAME, lang=CITY_LABEL_LANG,
+           include_census=INCLUDE_CENSUS):
     """Build, style, and add the three layers for one gps_log record."""
     project = QgsProject.instance()
 
@@ -309,8 +338,16 @@ def render(record_id=RECORD_ID, connection_name=CONNECTION_NAME, lang=CITY_LABEL
     base_uri = QgsDataSourceUri(conn.uri())
     muni_table = _resolve_muni_table(conn)
 
-    cities = _query_layer(base_uri, _cities_sql(record_id, muni_table),
-                          "geom", "city_code", cities_name, record_id)
+    # For census output, append the remaining columns after the base ones (in table
+    # order), excluding the identity columns already emitted and geom.
+    census_columns = None
+    if include_census:
+        skip = set(_BASE_COLUMNS) | {"geom"}
+        census_columns = [c for c in _muni_columns(conn, muni_table) if c not in skip]
+
+    cities = _query_layer(
+        base_uri, _cities_sql(record_id, muni_table, include_census, census_columns),
+        "geom", "city_code", cities_name, record_id)
     route  = _query_layer(base_uri, _route_sql(record_id),
                           "geom", "record_id", route_name, record_id)
 
@@ -339,7 +376,8 @@ def render(record_id=RECORD_ID, connection_name=CONNECTION_NAME, lang=CITY_LABEL
         canvas.refresh()
 
     print(f"record_id={record_id}: {cities.featureCount()} municipalities "
-          f"(source: {muni_table}), route and basemap loaded.")
+          f"(source: {muni_table}, census attributes: "
+          f"{'on' if include_census else 'off'}), route and basemap loaded.")
     if muni_table == MUNI_TABLE_FALLBACK:
         print(f"  Note: using the FDW view (slow on large routes). Build the local "
               f"matview {MUNI_TABLE_PREFERRED} for ~1 s renders (see the docstring).")
@@ -362,27 +400,43 @@ def _ask_lang(parent, default):
     return text if ok else None
 
 
+def _ask_census(parent, default):
+    """Modal dialog: include full census attributes on the Cities layer? bool or None."""
+    items = ["no", "yes"]
+    current = 1 if default else 0
+    text, ok = QInputDialog.getItem(
+        parent, "Render route",
+        "Include census attributes on the municipality layer?", items, current, False)
+    if not ok:
+        return None
+    return text == "yes"
+
+
 def prompt_parameters():
-    """Ask for the record_id and label language via modal dialogs.
+    """Ask for the record_id, label language, and census option via modal dialogs.
 
     input() is not usable here: under "Run Script" the QGIS console has no stdin
-    ("lost sys.stdin"), so Qt dialogs are used instead. Returns (None, None) if
-    either dialog is cancelled.
+    ("lost sys.stdin"), so Qt dialogs are used instead. Returns None if any dialog is
+    cancelled, otherwise (record_id, lang, include_census).
     """
     parent = iface.mainWindow() if iface is not None else None
     record_id = _ask_record_id(parent, RECORD_ID)
     if record_id is None:
-        return None, None
+        return None
     lang = _ask_lang(parent, _valid_lang(CITY_LABEL_LANG))
     if lang is None:
-        return None, None
-    return record_id, lang
+        return None
+    include_census = _ask_census(parent, INCLUDE_CENSUS)
+    if include_census is None:
+        return None
+    return record_id, lang, include_census
 
 
-# Auto-run: ask for the record_id and language (modal dialogs), then render. This
-# lets you change them at run time without editing and saving the file.
-_record_id, _label_lang = prompt_parameters()
-if _record_id is not None:
-    render(_record_id, lang=_label_lang)
+# Auto-run: ask for the record_id, language, and census option (modal dialogs), then
+# render. This lets you change them at run time without editing and saving the file.
+_params = prompt_parameters()
+if _params is not None:
+    _record_id, _label_lang, _include_census = _params
+    render(_record_id, lang=_label_lang, include_census=_include_census)
 else:
     print("Cancelled - no layers rendered.")
