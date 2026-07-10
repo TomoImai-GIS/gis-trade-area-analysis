@@ -2,10 +2,10 @@
 
 > Spatial analysis toolkit for Japan — PostGIS SQL templates and Python GIS utilities for location intelligence.
 
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12%2B-336791?logo=postgresql&logoColor=white)
-![PostGIS](https://img.shields.io/badge/PostGIS-3.0%2B-4CAF50)
-![QGIS](https://img.shields.io/badge/QGIS-3.x-589632?logo=qgis&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17%2B-336791?logo=postgresql&logoColor=white)
+![PostGIS](https://img.shields.io/badge/PostGIS-3.6%2B-4CAF50)
+![QGIS](https://img.shields.io/badge/QGIS-3.44%2B-589632?logo=qgis&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)
 
 > 🌎 Looking for the US market version? See [GIS Trade Area Analysis — US](https://github.com/TomoImai-GIS/gis-trade-area-analysis-us)
 
@@ -92,7 +92,7 @@ Utility scripts and an importable library for coordinate operations, data proces
 
 ### Prerequisites
 
-- PostgreSQL 12+ with PostGIS 3.0+
+- PostgreSQL 17+ with PostGIS 3.6+
 - Administrative boundary data loaded into `admin_jp` schema
 - Census data loaded into `e_stat` schema
 

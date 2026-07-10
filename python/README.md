@@ -143,4 +143,4 @@ lat, lon = jpr_to_wgs84(x, y, zone=9)             # → (35.6812, 139.7671)
 | dms.py | none | — |
 | jpr.py | pyproj >= 2.2 | `pip install pyproj` |
 | 01_data_analytics | pandas, numpy, matplotlib | `pip install pandas numpy matplotlib` |
-| 02_QGIS_automation | QGIS 3.x (built-in PyQGIS) | — |
+| 02_QGIS_automation | QGIS 3.44+ (built-in PyQGIS) | — |

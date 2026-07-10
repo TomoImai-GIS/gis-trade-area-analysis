@@ -214,7 +214,7 @@ ORDER BY customer_count DESC;
 
 ### Prerequisites
 
-- PostgreSQL 12+ with PostGIS 3.0+ enabled
+- PostgreSQL 17+ with PostGIS 3.6+ enabled
 - Administrative boundary data loaded into `admin_jp` schema
 - Census data loaded into `e_stat` schema
 
