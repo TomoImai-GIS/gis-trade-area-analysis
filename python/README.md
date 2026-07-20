@@ -57,11 +57,31 @@ are stored in the files.
 
 | File | Purpose | Layers produced | Companion SQL |
 |------|---------|-----------------|---------------|
-| [02-01_render_route_and_cities_along_route.py](02_QGIS_automation/02-01_render_route_and_cities_along_route.py) | Given a `gps_log.record_id`, draw and style the GPS route plus the municipalities it passes through | Cities along Route (polygons) · Route (line) · OpenStreetMap (basemap) | [03-04](../sql/03_visualization/03-04_visualize_cities_along_route_from_gps_log.sql) |
+| [02-01_render_route_and_cities_along_route.py](02_QGIS_automation/02-01_render_route_and_cities_along_route.py) | Draw and style a GPS route plus the municipalities it passes through. Prompts at run time for the `gps_log.record_id`, the label language, and whether to attach census attributes — so records can be redrawn without editing the file | Cities along Route (polygons) · Route (line) · OpenStreetMap (basemap) | [03-04](../sql/03_visualization/03-04_visualize_cities_along_route_from_gps_log.sql) |
+
+**02-01 at a glance**
+
+- **Run-time prompts** (Qt dialogs, no file edits needed): `record_id` · label language
+  `en`/`jp` · include census attributes `yes`/`no`.
+- **Language switch** drives the label column, the label font, and the layer names
+  together, so `jp` yields 「ルート沿い市区町村」/「ルート」 with Japanese names.
+- **Census option** — answer `yes` to carry every census column on the municipality
+  layer, so clicking a polygon shows its demographic profile (population, elderly
+  rate, density, industry, …) in the Identify panel. Identity and route-metric
+  columns always lead the attribute order.
+- **Municipality source is auto-resolved:** a local materialized copy is preferred and
+  the FDW view is used as a fallback, so the script is fast where the local cache
+  exists and still runs on a plain `postgres_fdw` setup.
 
 > **Prerequisites for 02-01:** a saved QGIS PostgreSQL connection to the gps_log
 > database (default name `GPS_log`), and `postgres_fdw` configured so that
-> `public.v_census_municipality` is reachable as a foreign table.
+> `public.v_census_municipality` is reachable as a foreign table. Querying that FDW
+> view directly is slow on long routes (the remote re-runs its census joins on every
+> call); building a local materialized copy once — see the setup block in the script
+> docstring — is picked up automatically and cuts a render to about a second.
+
+![Route and municipalities along the route rendered in QGIS](../output/python/02-01_render_route_and_cities_along_route.png)
+*One run of 02-01 from the QGIS Python console — a GPS route (Nagoya → Tokyo) with the 57 municipalities it passes through, styled and labelled automatically over an OpenStreetMap basemap*
 
 ---
 
